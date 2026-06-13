@@ -7,6 +7,7 @@ import { openPaystackPopup, generatePaystackRef } from '../lib/paystack';
 import { toast } from 'react-toastify';
 import { format } from 'date-fns';
 import { MapPinIcon, BriefcaseIcon, DollarIcon, ClockIcon, CheckIcon, ArrowLeftIcon, ShieldIcon, LockIcon } from '../components/ui/Icons';
+import SaveJobButton from '../components/ui/SaveJobButton';
 
 const COUNTRY_FLAGS = { DE:'🇩🇪',GB:'🇬🇧',CA:'🇨🇦',AE:'🇦🇪',PL:'🇵🇱',NL:'🇳🇱',US:'🇺🇸',AU:'🇦🇺',BE:'🇧🇪',IE:'🇮🇪',NG:'🇳🇬',GH:'🇬🇭' };
 
@@ -222,7 +223,10 @@ export default function JobDetailPage() {
           {/* Right — apply card */}
           <div style={styles.sidebar}>
             <div style={styles.applyCard}>
-              <div style={styles.feeLabel}>Service Fee</div>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 }}>
+                <div style={styles.feeLabel}>Service Fee</div>
+                <SaveJobButton jobId={job.id} size="lg" />
+              </div>
               <div style={styles.feeAmount}>{formatMoney(job.service_fee, job.service_fee_currency)}</div>
               <div style={styles.escrowNote}>
                 <LockIcon size={13} style={{ flexShrink: 0 }} />

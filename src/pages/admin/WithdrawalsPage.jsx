@@ -122,6 +122,7 @@ export default function WithdrawalsPage() {
   const approveMutation = useMutation({
     mutationFn: async (w) => {
       await supabase.from('withdrawals').update({ status: 'approved' }).eq('id', w.id);
+      await supabase.from('audit_logs').insert({ action: 'approve_withdrawal', entity_type: 'withdrawal', entity_id: w.id, new_value: { amount: w.amount, currency: w.currency } });
       await supabase.from('notifications').insert({ recipient_id: w.agent_id, type: 'withdrawal_approved', title: 'Withdrawal Approved', body: `Your withdrawal of ${formatMoney(w.amount, w.currency)} has been approved. Transfer in progress.`, link: '/agent/wallet' });
     },
     onSuccess: () => { toast.success('Withdrawal approved — now process the bank transfer'); queryClient.invalidateQueries(['admin_withdrawals']); },

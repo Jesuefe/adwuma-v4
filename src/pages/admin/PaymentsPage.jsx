@@ -7,15 +7,31 @@ import AppShell from '../../components/layout/AppShell';
 import { formatMoney, calculateEscrowSplit } from '../../lib/currency';
 import { CreditCardIcon, CheckCircleIcon, XIcon, AlertCircleIcon } from '../../components/ui/Icons';
 
-function ConfirmModal({ title, body, confirmLabel, onClose, onConfirm, danger }) {
+function ConfirmModal({ title, body, confirmLabel, onClose, onConfirm, danger, requireTyping }) {
+  const [typed, setTyped] = React.useState('');
+  const canConfirm = !requireTyping || typed === requireTyping;
   return (
     <div style={styles.overlay} onClick={onClose}>
       <div style={styles.modal} onClick={e => e.stopPropagation()}>
         <div style={styles.modalTitle}>{title}</div>
         <div style={styles.modalSub}>{body}</div>
+        {requireTyping && (
+          <div style={{ marginTop: 8 }}>
+            <div style={{ fontSize: 13, color: 'var(--text-2)', marginBottom: 8 }}>
+              Type <strong style={{ color: 'var(--gold)' }}>{requireTyping}</strong> to confirm:
+            </div>
+            <input
+              style={{ width: '100%', background: 'rgba(255,255,255,0.04)', border: '1px solid var(--border)', borderRadius: 8, padding: '10px 12px', fontSize: 14, color: 'var(--text-1)', outline: 'none', fontFamily: 'Inter, sans-serif' }}
+              value={typed}
+              onChange={e => setTyped(e.target.value.toUpperCase())}
+              placeholder={requireTyping}
+              autoFocus
+            />
+          </div>
+        )}
         <div style={styles.modalBtns}>
           <button className="btn btn-outline" onClick={onClose}>Cancel</button>
-          <button className={danger ? 'btn btn-danger' : 'btn btn-gold'} onClick={onConfirm}>{confirmLabel}</button>
+          <button className={danger ? 'btn btn-danger' : 'btn btn-gold'} onClick={onConfirm} disabled={!canConfirm} style={{ opacity: canConfirm ? 1 : 0.5 }}>{confirmLabel}</button>
         </div>
       </div>
     </div>
@@ -115,6 +131,8 @@ export default function PaymentsPage() {
       const { agentPayout, platformFee } = calculateEscrowSplit(payment.amount, payment.platform_fee_pct || 10);
       // Update payment
       await supabase.from('payments').update({ escrow_status: 'released', agent_payout_amount: agentPayout, platform_fee_amount: platformFee, released_at: new Date().toISOString() }).eq('id', payment.id);
+      // Audit log
+      await supabase.from('audit_logs').insert({ action: 'release_escrow', entity_type: 'payment', entity_id: payment.id, new_value: { amount: payment.amount, agent_payout: agentPayout, platform_fee: platformFee } });
       // Credit agent wallet
       const { data: wallet } = await supabase.from('agent_wallets').select('balance').eq('agent_id', payment.agent_id).eq('currency', payment.currency).single();
       const newBalance = (wallet?.balance || 0) + agentPayout;
@@ -191,6 +209,7 @@ export default function PaymentsPage() {
             title="Release Escrow"
             body={`Release ${formatMoney(confirmAction.payment.amount, confirmAction.payment.currency)} to the agent? Platform keeps ${formatMoney(calculateEscrowSplit(confirmAction.payment.amount).platformFee, confirmAction.payment.currency)} (10%). Agent receives ${formatMoney(calculateEscrowSplit(confirmAction.payment.amount).agentPayout, confirmAction.payment.currency)}.`}
             confirmLabel="Release Payment"
+            requireTyping="RELEASE"
             onClose={() => setConfirmAction(null)}
             onConfirm={() => releaseMutation.mutate(confirmAction.payment)}
           />

@@ -36,7 +36,9 @@ const NAV = {
 };
 
 const SIDEBAR_EXTRAS = {
-  seeker: [],
+  seeker: [
+    { to: '/dashboard/saved', icon: BriefcaseIcon, label: 'Saved Jobs' },
+  ],
   agent: [
     { to: '/agent/kyc', icon: ShieldIcon, label: 'KYC Verification' },
     { to: '/agent/profile', icon: UserIcon, label: 'Profile' },
@@ -44,6 +46,9 @@ const SIDEBAR_EXTRAS = {
   admin: [
     { to: '/admin/documents', icon: ClipboardIcon, label: 'Documents' },
     { to: '/admin/withdrawals', icon: WalletIcon, label: 'Withdrawals' },
+    { to: '/admin/analytics', icon: TrendingUpIcon, label: 'Analytics' },
+    { to: '/admin/fraud', icon: AlertCircleIcon, label: 'Fraud Detection' },
+    { to: '/admin/audit', icon: ClipboardIcon, label: 'Audit Log' },
     { to: '/admin/settings', icon: SettingsIcon, label: 'Settings' },
     { to: '/admin/inbox', icon: MessageIcon, label: 'All Threads' },
   ],

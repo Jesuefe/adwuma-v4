@@ -100,6 +100,19 @@ function MessageArea({ thread, userId, isAdmin, onBack }) {
     if (sanitized !== newMsg.trim()) {
       setBlocked(true);
       setTimeout(() => setBlocked(false), 3000);
+      // Log flagged message
+      const patterns = ['phone', 'email', 'url', 'social'];
+      const flaggedPattern = patterns.find(p => {
+        if (p === 'phone') return /\b\d{10,13}\b/.test(newMsg);
+        if (p === 'email') return /[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}/.test(newMsg);
+        if (p === 'url') return /(https?:\/\/|www\.)/.test(newMsg);
+        if (p === 'social') return /(whatsapp|telegram|instagram|facebook)/i.test(newMsg);
+        return false;
+      }) || 'contact_info';
+      supabase.from('flagged_messages').insert({
+        thread_id: thread.id, sender_id: userId,
+        original_body: newMsg.trim(), flagged_pattern: flaggedPattern,
+      }).then(() => {});
       return;
     }
     setSending(true);

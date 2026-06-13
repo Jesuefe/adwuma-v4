@@ -4,6 +4,7 @@ import { supabase } from '../lib/supabase';
 import { formatMoney } from '../lib/currency';
 import { useAuth } from '../context/AuthContext';
 import { SearchIcon, BriefcaseIcon, StarIcon, LockIcon } from '../components/ui/Icons';
+import SaveJobButton from '../components/ui/SaveJobButton';
 
 const COUNTRY_FLAGS = { DE:'🇩🇪',GB:'🇬🇧',CA:'🇨🇦',AE:'🇦🇪',PL:'🇵🇱',NL:'🇳🇱',US:'🇺🇸',AU:'🇦🇺',BE:'🇧🇪',IE:'🇮🇪',NG:'🇳🇬',GH:'🇬🇭' };
 
@@ -33,7 +34,10 @@ function JobCard({ job, onClickLocked, isLoggedIn }) {
             <div style={styles.agentAvatar}>{job.profiles?.first_name?.[0]}{job.profiles?.last_name?.[0]}</div>
             <span style={styles.agentName}>{job.profiles?.first_name} {job.profiles?.last_name}</span>
           </div>
-          <div style={styles.viewBtn}>View →</div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+            <SaveJobButton jobId={job.id} />
+            <div style={styles.viewBtn}>View →</div>
+          </div>
         </div>
       </Link>
     );

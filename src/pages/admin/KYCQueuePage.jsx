@@ -124,6 +124,7 @@ export default function KYCQueuePage() {
   const approveMutation = useMutation({
     mutationFn: async (kyc) => {
       await supabase.from('agent_kyc').update({ status: 'approved', reviewed_at: new Date().toISOString() }).eq('id', kyc.id);
+      await supabase.from('audit_logs').insert({ action: 'approve_kyc', entity_type: 'agent_kyc', entity_id: kyc.id, new_value: { agent_id: kyc.agent_id, business_name: kyc.business_name } });
       await supabase.from('notifications').insert({
         recipient_id: kyc.agent_id, type: 'kyc_approved',
         title: 'KYC Approved!',
