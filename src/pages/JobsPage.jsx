@@ -4,7 +4,6 @@ import { useAuth } from '../context/AuthContext';
 import AppShell from '../components/layout/AppShell';
 import { supabase } from '../lib/supabase';
 import { formatMoney } from '../lib/currency';
-import { useAuth } from '../context/AuthContext';
 import { SearchIcon, MapPinIcon, FilterIcon, BriefcaseIcon } from '../components/ui/Icons';
 
 const COUNTRY_FLAGS = { DE:'🇩🇪',GB:'🇬🇧',CA:'🇨🇦',AE:'🇦🇪',PL:'🇵🇱',NL:'🇳🇱',US:'🇺🇸',AU:'🇦🇺',BE:'🇧🇪',IE:'🇮🇪',NG:'🇳🇬',GH:'🇬🇭' };
