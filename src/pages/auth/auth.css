@@ -1,0 +1,30 @@
+/* Auth pages shared styles */
+/* Import in index.css or each auth page */
+
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Inter:wght@300;400;500;600&display=swap');
+
+:root {
+  --auth-bg: #05080f;
+  --auth-card: #0d1117;
+  --auth-border: rgba(255,255,255,0.07);
+  --auth-border-focus: rgba(99,102,241,0.6);
+  --accent: #6366f1;
+  --accent-hover: #4f46e5;
+  --accent-glow: rgba(99,102,241,0.15);
+  --text-primary: #f0f0f0;
+  --text-secondary: #8b8fa8;
+  --text-muted: #4a4d5e;
+  --error: #ef4444;
+  --success: #22c55e;
+  --input-bg: rgba(255,255,255,0.04);
+  --input-border: rgba(255,255,255,0.09);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--auth-bg);
+  color: var(--text-primary);
+  font-family: 'Inter', sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
