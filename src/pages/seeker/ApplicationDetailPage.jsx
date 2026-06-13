@@ -3,6 +3,8 @@ import { useParams, Link } from 'react-router-dom';
 import AppShell from '../../components/layout/AppShell';
 import { useAuth } from '../../context/AuthContext';
 import { supabase, subscribeToMessages } from '../../lib/supabase';
+import { useFileUpload } from '../../hooks';
+import { differenceInDays, format } from 'date-fns';
 import { formatMoney } from '../../lib/currency';
 import { formatDistanceToNow, format } from 'date-fns';
 import { CheckIcon, ClockIcon, ArrowLeftIcon, DownloadIcon, SendIcon, MessageIcon } from '../../components/ui/Icons';
@@ -31,7 +33,12 @@ export default function ApplicationDetailPage() {
   const [thread, setThread] = useState(null);
   const [newMsg, setNewMsg] = useState('');
   const [sending, setSending] = useState(false);
-  const [tab, setTab] = useState('tracker'); // tracker | docs | chat
+  const [tab, setTab] = useState('tracker');
+  const { upload, uploading } = useFileUpload();
+  const [seekerDocs, setSeekerDocs] = useState([]);
+  const [uploadingDoc, setUploadingDoc] = useState(null);
+  const docInputRef = React.useRef(null);
+  const [activeDocId, setActiveDocId] = useState(null); // tracker | docs | chat
   const msgEndRef = useRef(null);
 
   useEffect(() => {
@@ -67,6 +74,9 @@ export default function ApplicationDetailPage() {
       .single();
     setApp(data);
     setDocs((data?.application_documents || []).filter(d => d.status === 'approved'));
+    // Load seeker docs
+    const { data: sdocs } = await supabase.from('seeker_documents').select('*').eq('application_id', applicationId);
+    setSeekerDocs(sdocs || []);
 
     // Load message thread
     const { data: t } = await supabase.from('message_threads').select('*').eq('application_id', applicationId).single();
@@ -78,6 +88,27 @@ export default function ApplicationDetailPage() {
     setMessages(data || []);
     // Mark read
     await supabase.from('messages').update({ is_read: true }).eq('thread_id', thread.id).neq('sender_id', user.id);
+  }
+
+  async function uploadSeekerDoc(file, docName) {
+    if (!file) return;
+    setUploadingDoc(docName);
+    try {
+      const url = await upload(file, 'documents', `seeker-docs/${user.id}`);
+      const reqDoc = app?.jobs?.job_document_checklist?.find(d => d.document_name === docName);
+      await supabase.from('seeker_documents').insert({
+        application_id: applicationId,
+        seeker_id: user.id,
+        document_name: docName,
+        file_url: url,
+        is_required: reqDoc?.required_from_seeker || false,
+      });
+      toast.success(`${docName} uploaded`);
+      // Reload seeker docs
+      const { data } = await supabase.from('seeker_documents').select('*').eq('application_id', applicationId);
+      setSeekerDocs(data || []);
+    } catch (err) { toast.error(err.message); }
+    setUploadingDoc(null);
   }
 
   async function sendMessage() {
@@ -136,6 +167,22 @@ export default function ApplicationDetailPage() {
         </div>
 
         {/* ── Tracker ── */}
+        {/* Delivery countdown */}
+        {app?.delivery_deadline && app?.status !== 'approved' && (
+          <div style={{ background: differenceInDays(new Date(app.delivery_deadline), new Date()) < 3 ? 'var(--error-dim)' : 'var(--gold-dim)', border: `1px solid ${differenceInDays(new Date(app.delivery_deadline), new Date()) < 3 ? 'rgba(239,68,68,0.2)' : 'var(--gold-border)'}`, borderRadius: 10, padding: '12px 14px', marginBottom: 16 }}>
+            <div style={{ fontSize: 12, fontWeight: 600, color: differenceInDays(new Date(app.delivery_deadline), new Date()) < 3 ? 'var(--error)' : 'var(--gold-text)', marginBottom: 4 }}>
+              ⏱ Delivery Deadline
+            </div>
+            <div style={{ fontSize: 14, color: 'var(--text-1)', fontWeight: 600 }}>
+              {format(new Date(app.delivery_deadline), 'MMMM d, yyyy')} 
+              {' '}({Math.max(0, differenceInDays(new Date(app.delivery_deadline), new Date()))} days remaining)
+            </div>
+            {differenceInDays(new Date(app.delivery_deadline), new Date()) < 0 && (
+              <div style={{ fontSize: 12, color: 'var(--error)', marginTop: 4 }}>Deadline has passed — 10% refund is being processed</div>
+            )}
+          </div>
+        )}
+
         {tab === 'tracker' && (
           <div style={styles.timeline}>
             {steps.map((step, i) => {
@@ -170,6 +217,47 @@ export default function ApplicationDetailPage() {
         )}
 
         {/* ── Documents ── */}
+        {tab === 'my_docs' && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+            <div className="card">
+              <div style={{ fontFamily: 'Syne, sans-serif', fontWeight: 700, fontSize: 15, color: 'var(--text-1)', marginBottom: 8 }}>Upload Your Documents</div>
+              <div style={{ fontSize: 13, color: 'var(--text-2)', marginBottom: 16, lineHeight: 1.6 }}>Upload the documents required by the agent to process your application.</div>
+              {/* Required docs from job checklist */}
+              {(app?.jobs?.job_document_checklist || []).filter(d => d.is_seeker_doc).map(doc => {
+                const uploaded = seekerDocs.find(s => s.document_name === doc.document_name);
+                return (
+                  <div key={doc.id} style={{ display: 'flex', alignItems: 'center', gap: 10, background: 'var(--bg-2)', borderRadius: 8, padding: '10px 12px', marginBottom: 8 }}>
+                    <div style={{ flex: 1 }}>
+                      <div style={{ fontSize: 13, fontWeight: 500, color: 'var(--text-1)' }}>
+                        {doc.document_name}
+                        <span style={{ marginLeft: 6, fontSize: 10, color: doc.required_from_seeker ? 'var(--error)' : 'var(--text-3)', fontWeight: 600 }}>
+                          {doc.required_from_seeker ? 'Required' : 'Optional'}
+                        </span>
+                      </div>
+                      {uploaded && <div style={{ fontSize: 11, color: '#22c55e', marginTop: 3 }}>✓ Uploaded</div>}
+                    </div>
+                    {uploaded ? (
+                      <a href={uploaded.file_url} target="_blank" rel="noopener noreferrer" style={{ fontSize: 12, color: 'var(--gold-text)', textDecoration: 'none', background: 'var(--gold-dim)', padding: '4px 10px', borderRadius: 6 }}>View</a>
+                    ) : (
+                      <button
+                        style={{ fontSize: 12, background: 'var(--gold)', color: '#000', border: 'none', borderRadius: 6, padding: '6px 12px', cursor: 'pointer', fontFamily: 'Inter, sans-serif', fontWeight: 600 }}
+                        onClick={() => { setActiveDocId(doc.document_name); docInputRef.current?.click(); }}
+                        disabled={uploadingDoc === doc.document_name}
+                      >
+                        {uploadingDoc === doc.document_name ? '…' : 'Upload'}
+                      </button>
+                    )}
+                  </div>
+                );
+              })}
+              <input
+                ref={docInputRef} type="file" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" style={{ display: 'none' }}
+                onChange={e => { if (e.target.files[0] && activeDocId) uploadSeekerDoc(e.target.files[0], activeDocId); }}
+              />
+            </div>
+          </div>
+        )}
+
         {tab === 'docs' && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
             {docs.length === 0 ? (

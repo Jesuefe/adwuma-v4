@@ -66,9 +66,12 @@ export default function PostJobPage() {
     salary_currency: 'USD', salary_period: 'monthly',
     description: '', requirements: '',
     service_fee: '', service_fee_currency: 'NGN', deadline: '',
+    delivery_days: '30',
   });
   const [checklist, setChecklist] = useState([]);
   const [newCheckItem, setNewCheckItem] = useState('');
+  const [seekerDocItem, setSeekerDocItem] = useState('');
+  const [seekerDocs, setSeekerDocs] = useState([]);
   const [companyLogoFile, setCompanyLogoFile] = useState(null);
   const [logoPreview, setLogoPreview] = useState('');
   const [coverImageFile, setCoverImageFile] = useState(null);
@@ -93,8 +96,10 @@ export default function PostJobPage() {
         description: data.description || '', requirements: data.requirements || '',
         service_fee: data.service_fee || '', service_fee_currency: data.service_fee_currency || 'NGN',
         deadline: data.deadline || '',
+        delivery_days: data.delivery_days || '30',
       });
-      setChecklist(data.job_document_checklist?.map(d => d.document_name) || []);
+      setChecklist(data.job_document_checklist?.filter(d => !d.is_seeker_doc).map(d => d.document_name) || []);
+      setSeekerDocs(data.job_document_checklist?.filter(d => d.is_seeker_doc).map(d => ({ label: d.document_name, required: d.required_from_seeker })) || []);
       if (data.company_logo_url) setLogoPreview(data.company_logo_url);
       if (data.cover_image_url) setCoverPreview(data.cover_image_url);
     });
@@ -102,6 +107,7 @@ export default function PostJobPage() {
 
   const handleChange = (e) => setForm(f => ({ ...f, [e.target.name]: e.target.value }));
   const addCheckItem = () => { if (!newCheckItem.trim()) return; setChecklist(c => [...c, newCheckItem.trim()]); setNewCheckItem(''); };
+  const addSeekerDoc = () => { if (!newCheckItem.trim()) return; setSeekerDocs(d => [...d, { label: newCheckItem.trim(), required: true }]); setNewCheckItem(''); };
   const removeCheckItem = (i) => setChecklist(c => c.filter((_, idx) => idx !== i));
 
   const handleSubmit = async (e) => {
@@ -133,6 +139,7 @@ export default function PostJobPage() {
         description: form.description, requirements: form.requirements || null,
         service_fee: Number(form.service_fee), service_fee_currency: form.service_fee_currency,
         deadline: form.deadline || null, status: 'pending',
+        delivery_days: Number(form.delivery_days) || 30,
         company_logo_url: companyLogoUrl,
         cover_image_url: coverImageUrl,
       };
@@ -148,7 +155,12 @@ export default function PostJobPage() {
 
       if (checklist.length > 0) {
         await supabase.from('job_document_checklist').insert(
-          checklist.map((name, i) => ({ job_id: savedJobId, document_name: name, sort_order: i }))
+          checklist.map((name, i) => ({ job_id: savedJobId, document_name: name, sort_order: i, is_seeker_doc: false }))
+        );
+      }
+      if (seekerDocs.length > 0) {
+        await supabase.from('job_document_checklist').insert(
+          seekerDocs.map((doc, i) => ({ job_id: savedJobId, document_name: doc.label, sort_order: checklist.length + i, is_seeker_doc: true, required_from_seeker: doc.required, seeker_doc_label: doc.label }))
         );
       }
 
@@ -330,6 +342,57 @@ export default function PostJobPage() {
               <label className="input-label">Closing Date (optional)</label>
               <input className="input" name="deadline" type="date" value={form.deadline} onChange={handleChange} />
             </div>
+          </div>
+
+          {/* Delivery Timeline */}
+          <div className="card" style={{ borderColor: 'var(--gold-border)' }}>
+            <div style={styles.sectionTitle}>Delivery Timeline *</div>
+            <div style={{ fontSize: 13, color: 'var(--text-2)', marginBottom: 16, lineHeight: 1.6 }}>
+              How many days from payment to complete this placement? If you miss the deadline, the seeker receives a <strong style={{ color: 'var(--gold-text)' }}>10% automatic refund</strong> deducted from your wallet. Maximum is 90 days.
+            </div>
+            <div>
+              <label className="input-label">Delivery Timeline *</label>
+              <select className="input" name="delivery_days" value={form.delivery_days} onChange={handleChange} style={{ cursor: 'pointer' }}>
+                <option value="7">7 days</option>
+                <option value="14">14 days</option>
+                <option value="21">21 days</option>
+                <option value="30">30 days (recommended)</option>
+                <option value="45">45 days</option>
+                <option value="60">60 days</option>
+                <option value="90">90 days (maximum)</option>
+              </select>
+            </div>
+            <div style={{ fontSize: 12, color: 'var(--text-3)', marginTop: 10, background: 'var(--gold-dim)', padding: '8px 12px', borderRadius: 6, border: '1px solid var(--gold-border)' }}>
+              ⚠️ This is a binding commitment. If you do not complete the placement within {form.delivery_days} days of payment, 10% of the service fee is automatically refunded to the seeker from your wallet.
+            </div>
+          </div>
+
+          {/* Seeker required documents */}
+          <div className="card">
+            <div style={styles.sectionTitle}>Documents Required from Seeker</div>
+            <div style={{ fontSize: 13, color: 'var(--text-2)', marginBottom: 14 }}>
+              List documents the seeker must upload after payment (e.g. Passport, Degree Certificate). Mark required ones — seekers must upload all required docs before you begin processing.
+            </div>
+            <div style={{ display: 'flex', gap: 8, marginBottom: 10, alignItems: 'center' }}>
+              <input className="input" style={{ flex: 1 }} value={newCheckItem} onChange={e => setNewCheckItem(e.target.value)} placeholder="e.g. International Passport" onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); addCheckItem(); } }} />
+              <button type="button" className="btn btn-gold" onClick={addCheckItem} style={{ flexShrink: 0 }}><PlusIcon size={15} /> Add</button>
+            </div>
+            {seekerDocs.length > 0 ? (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                {seekerDocs.map((item, i) => (
+                  <div key={i} style={{ ...styles.checkItem, justifyContent: 'space-between' }}>
+                    <span style={{ fontSize: 13, color: 'var(--text-1)', flex: 1 }}>📄 {item.label}</span>
+                    <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: 'var(--text-2)', cursor: 'pointer', flexShrink: 0 }}>
+                      <input type="checkbox" checked={item.required} onChange={() => setSeekerDocs(d => d.map((x, idx) => idx === i ? { ...x, required: !x.required } : x))} />
+                      Required
+                    </label>
+                    <button type="button" style={styles.removeBtn} onClick={() => setSeekerDocs(d => d.filter((_, idx) => idx !== i))}><XIcon size={14} /></button>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div style={{ fontSize: 13, color: 'var(--text-3)', fontStyle: 'italic' }}>No seeker documents added</div>
+            )}
           </div>
 
           <button type="submit" className="btn btn-gold btn-full btn-lg" disabled={saving || uploading}>

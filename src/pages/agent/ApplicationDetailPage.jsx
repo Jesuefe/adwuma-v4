@@ -27,6 +27,7 @@ export default function AgentApplicationDetailPage() {
   const [savingNote, setSavingNote] = useState(false);
   const [docName, setDocName] = useState('');
   const [tab, setTab] = useState('steps');
+  const [seekerDocs, setSeekerDocs] = useState([]);
   const fileRef = useRef(null);
   const msgEndRef = useRef(null);
 
@@ -49,7 +50,7 @@ export default function AgentApplicationDetailPage() {
 
   async function loadApp() {
     const { data } = await supabase.from('applications')
-      .select(`*, jobs(title, company_name, service_fee, service_fee_currency, job_document_checklist(document_name)),
+      .select(`*, jobs(title, company_name, service_fee, service_fee_currency, job_document_checklist(id, document_name, is_seeker_doc, required_from_seeker)),
         profiles!applications_seeker_id_fkey(first_name, last_name, phone),
         application_steps(*), payments(*),
         application_documents(*), agent_notes(*)`)
@@ -60,6 +61,8 @@ export default function AgentApplicationDetailPage() {
     setDocs(data.application_documents || []);
     const { data: t } = await supabase.from('message_threads').select('*').eq('application_id', applicationId).single();
     if (t) setThread(t);
+    const { data: sdocs } = await supabase.from('seeker_documents').select('*').eq('application_id', applicationId);
+    setSeekerDocs(sdocs || []);
   }
 
   async function loadMessages() {
@@ -143,7 +146,7 @@ export default function AgentApplicationDetailPage() {
 
         {/* Tabs */}
         <div style={styles.tabs}>
-          {[{ id: 'steps', label: 'Steps' }, { id: 'docs', label: `Documents (${docs.length})` }, { id: 'chat', label: 'Chat' }, { id: 'notes', label: `Notes (${notes.length})` }].map(t => (
+          {[{ id: 'steps', label: 'Steps' }, { id: 'seeker_docs', label: `Seeker Docs (${seekerDocs.length})` }, { id: 'docs', label: `My Documents (${docs.length})` }, { id: 'chat', label: 'Chat' }, { id: 'notes', label: `Notes (${notes.length})` }].map(t => (
             <button key={t.id} style={{ ...styles.tab, ...(tab === t.id ? styles.tabActive : {}) }} onClick={() => setTab(t.id)}>{t.label}</button>
           ))}
         </div>
@@ -179,6 +182,29 @@ export default function AgentApplicationDetailPage() {
         )}
 
         {/* Documents */}
+        {tab === 'seeker_docs' && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+            <div style={{ fontSize: 13, color: 'var(--text-2)', marginBottom: 4 }}>Documents uploaded by the seeker for this application.</div>
+            {/* Required docs checklist */}
+            {(app?.jobs?.job_document_checklist || []).filter(d => d.is_seeker_doc).map(req => {
+              const uploaded = seekerDocs.find(s => s.document_name === req.document_name);
+              return (
+                <div key={req.id} style={{ display: 'flex', alignItems: 'center', gap: 10, background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 10, padding: '12px 14px' }}>
+                  <div style={{ width: 10, height: 10, borderRadius: '50%', background: uploaded ? '#22c55e' : req.required_from_seeker ? 'var(--error)' : 'var(--text-3)', flexShrink: 0 }} />
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontSize: 13, fontWeight: 500, color: 'var(--text-1)' }}>{req.document_name}</div>
+                    <div style={{ fontSize: 11, color: uploaded ? '#22c55e' : 'var(--text-3)' }}>{uploaded ? 'Uploaded' : req.required_from_seeker ? 'Awaiting upload' : 'Not uploaded'}</div>
+                  </div>
+                  {uploaded && <a href={uploaded.file_url} target="_blank" rel="noopener noreferrer" style={{ fontSize: 12, color: 'var(--gold-text)', textDecoration: 'none', background: 'var(--gold-dim)', padding: '4px 10px', borderRadius: 6 }}>View</a>}
+                </div>
+              );
+            })}
+            {seekerDocs.length === 0 && app?.jobs?.job_document_checklist?.filter(d => d.is_seeker_doc).length === 0 && (
+              <div style={{ fontSize: 13, color: 'var(--text-3)', textAlign: 'center', padding: 24 }}>No documents required from seeker for this job</div>
+            )}
+          </div>
+        )}
+
         {tab === 'docs' && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
             {/* Upload section */}

@@ -172,6 +172,36 @@ function MessageArea({ thread, userId, isAdmin, onBack }) {
 
       <div style={styles.safetyBanner}>
         🔒 For your safety, contact details and external links are blocked. All communication must stay on Adwuma.
+        {!isAdmin && (
+          <button
+            onClick={async () => {
+              if (!window.confirm('Request admin to join this conversation to help resolve an issue?')) return;
+              const reason = window.prompt('Briefly describe the issue:');
+              if (!reason) return;
+              await supabase.from('message_threads').update({
+                admin_invited: true,
+                admin_invited_at: new Date().toISOString(),
+                admin_invited_by: userId,
+                dispute_reason: reason,
+              }).eq('id', thread.id);
+              // Notify admin
+              await supabase.from('notifications').insert({
+                recipient_id: null,
+                type: 'admin_invited',
+                title: '🚨 Admin Help Requested',
+                body: `A user requested admin help in a chat. Reason: ${reason}`,
+                link: '/admin/inbox',
+              });
+              toast.success('Admin has been notified and will join shortly.');
+            }}
+            style={{ marginLeft: 'auto', fontSize: 11, color: 'var(--error)', background: 'none', border: '1px solid rgba(239,68,68,0.3)', borderRadius: 6, padding: '3px 10px', cursor: 'pointer', fontFamily: 'Inter, sans-serif' }}
+          >
+            🚨 Request Admin Help
+          </button>
+        )}
+        {thread?.admin_invited && (
+          <span style={{ marginLeft: 8, fontSize: 11, color: '#22c55e', fontWeight: 600 }}>✓ Admin notified</span>
+        )}
       </div>
 
       <div style={styles.messages}>
@@ -192,7 +222,7 @@ function MessageArea({ thread, userId, isAdmin, onBack }) {
         <div ref={endRef} />
       </div>
 
-      {!isAdmin ? (
+      {(!isAdmin || thread?.admin_invited) ? (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
           {blocked && <div style={styles.blockedWarning}>⚠️ Contact details, phone numbers, and external links are not allowed in messages.</div>}
           <div style={styles.inputRow}>
