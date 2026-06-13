@@ -110,7 +110,7 @@ export default function JobDetailPage() {
         agent_id: job.agent_id,
         cover_message: coverMessage || null,
         cv_url: cvUrl,
-        status: 'pending_payment',
+        status: 'in_escrow',
       }).select().single();
 
       if (appError) throw appError;
