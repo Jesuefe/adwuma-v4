@@ -70,7 +70,7 @@ export default function PostJobPage() {
   });
   const [checklist, setChecklist] = useState([]);
   const [newCheckItem, setNewCheckItem] = useState('');
-  const [seekerDocItem, setSeekerDocItem] = useState('');
+  const [newSeekerDoc, setNewSeekerDoc] = useState('');
   const [seekerDocs, setSeekerDocs] = useState([]);
   const [companyLogoFile, setCompanyLogoFile] = useState(null);
   const [logoPreview, setLogoPreview] = useState('');
@@ -374,8 +374,8 @@ export default function PostJobPage() {
               List documents the seeker must upload after payment (e.g. Passport, Degree Certificate). Mark required ones — seekers must upload all required docs before you begin processing.
             </div>
             <div style={{ display: 'flex', gap: 8, marginBottom: 10, alignItems: 'center' }}>
-              <input className="input" style={{ flex: 1 }} value={newCheckItem} onChange={e => setNewCheckItem(e.target.value)} placeholder="e.g. International Passport" onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); addCheckItem(); } }} />
-              <button type="button" className="btn btn-gold" onClick={addCheckItem} style={{ flexShrink: 0 }}><PlusIcon size={15} /> Add</button>
+              <input className="input" style={{ flex: 1 }} value={newSeekerDoc} onChange={e => setNewSeekerDoc(e.target.value)} placeholder="e.g. International Passport" onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); if (newSeekerDoc.trim()) { setSeekerDocs(d => [...d, { label: newSeekerDoc.trim(), required: true }]); setNewSeekerDoc(''); } } }} />
+              <button type="button" className="btn btn-gold" onClick={() => { if (!newSeekerDoc.trim()) return; setSeekerDocs(d => [...d, { label: newSeekerDoc.trim(), required: true }]); setNewSeekerDoc(''); }} style={{ flexShrink: 0 }}><PlusIcon size={15} /> Add</button>
             </div>
             {seekerDocs.length > 0 ? (
               <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
