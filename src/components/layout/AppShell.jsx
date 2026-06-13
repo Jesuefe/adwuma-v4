@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { ThemeToggle } from '../../context/ThemeContext';
 import { useNotifications } from '../../hooks';
 import {
   HomeIcon, BriefcaseIcon, FileTextIcon, MessageIcon, UserIcon,
@@ -170,6 +171,7 @@ export default function AppShell({ children, title = 'Adwuma' }) {
         <div className="topbar">
           <span className="topbar-title">{title}</span>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <ThemeToggle />
             <NotifBell />
           </div>
         </div>

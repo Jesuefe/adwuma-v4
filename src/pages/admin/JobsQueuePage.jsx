@@ -87,6 +87,23 @@ function JobCard({ job, onApprove, onReject, onToggleFeature }) {
 
       {expanded && (
         <div style={styles.preview}>
+          {/* Images */}
+          {(job.cover_image_url || job.company_logo_url) && (
+            <div style={{ display: 'flex', gap: 12, marginBottom: 8 }}>
+              {job.company_logo_url && (
+                <div>
+                  <div style={styles.previewLabel}>Company Logo</div>
+                  <img src={job.company_logo_url} alt="logo" style={{ width: 60, height: 60, borderRadius: 8, objectFit: 'cover', border: '1px solid var(--border)', marginTop: 4 }} />
+                </div>
+              )}
+              {job.cover_image_url && (
+                <div style={{ flex: 1 }}>
+                  <div style={styles.previewLabel}>Cover Image</div>
+                  <img src={job.cover_image_url} alt="cover" style={{ width: '100%', height: 100, borderRadius: 8, objectFit: 'cover', border: '1px solid var(--border)', marginTop: 4 }} />
+                </div>
+              )}
+            </div>
+          )}
           <div style={styles.previewSection}>
             <div style={styles.previewLabel}>Description</div>
             <div style={styles.previewText}>{job.description}</div>

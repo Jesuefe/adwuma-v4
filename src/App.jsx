@@ -5,6 +5,7 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 import { AuthProvider } from './context/AuthContext';
+import { ThemeProvider } from './context/ThemeContext';
 import { RoleRoute, PublicOnlyRoute } from './components/shared/RouteGuards';
 import PlaceholderPage from './pages/PlaceholderPage';
 
@@ -64,6 +65,7 @@ function PageLoader() {
 export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
+      <ThemeProvider>
       <AuthProvider>
         <BrowserRouter>
           <Suspense fallback={<PageLoader />}>
@@ -116,6 +118,7 @@ export default function App() {
           <ToastContainer position="top-right" autoClose={4000} theme="dark" />
         </BrowserRouter>
       </AuthProvider>
+      </ThemeProvider>
     </QueryClientProvider>
   );
 }

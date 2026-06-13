@@ -149,13 +149,21 @@ export default function JobDetailPage() {
       </div>
 
       <div style={styles.body}>
+        {/* Cover image */}
+        {job.cover_image_url && (
+          <div style={styles.coverImageWrap}>
+            <img src={job.cover_image_url} alt={job.title} style={styles.coverImage} />
+          </div>
+        )}
         <div style={styles.layout}>
           {/* Left — job details */}
           <div style={styles.main}>
             {/* Job header */}
             <div style={styles.jobHeader}>
               <div style={{ display: 'flex', alignItems: 'flex-start', gap: 16 }}>
-                <span style={{ fontSize: 40 }}>{flag}</span>
+                {job.company_logo_url
+                  ? <img src={job.company_logo_url} alt={job.company_name} style={styles.companyLogoLg} />
+                  : <span style={{ fontSize: 40 }}>{flag}</span>}
                 <div>
                   <h1 style={styles.jobTitle}>{job.title}</h1>
                   <div style={styles.jobCompany}>{job.company_name}</div>
@@ -292,5 +300,8 @@ const styles = {
   textarea: { width: '100%', background: 'rgba(255,255,255,0.04)', border: '1px solid var(--border)', borderRadius: 8, padding: '10px 12px', fontSize: 14, color: 'var(--text-1)', outline: 'none', fontFamily: 'Inter, sans-serif', resize: 'vertical' },
   trustPoints: { display: 'flex', flexDirection: 'column', gap: 6, paddingTop: 4, borderTop: '1px solid var(--border)' },
   trustPoint: { display: 'flex', alignItems: 'center', gap: 7, fontSize: 12, color: 'var(--text-2)' },
+  coverImageWrap: { width: '100%', maxHeight: 300, overflow: 'hidden', marginBottom: 0 },
+  coverImage: { width: '100%', height: 280, objectFit: 'cover' },
+  companyLogoLg: { width: 60, height: 60, borderRadius: 12, objectFit: 'cover', border: '2px solid var(--border)', flexShrink: 0 },
   '@media (minWidth: 768px)': { layout: { flexDirection: 'row' }, sidebar: { width: 320, flexShrink: 0 } },
 };
