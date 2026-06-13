@@ -6,7 +6,8 @@ import { useNotifications } from 'hooks';
 import {
   HomeIcon, BriefcaseIcon, FileTextIcon, MessageIcon, UserIcon,
   WalletIcon, BellIcon, LogOutIcon, SettingsIcon, UsersIcon,
-  ClipboardIcon, CreditCardIcon, ShieldIcon, BuildingIcon, ChevronRightIcon
+  ClipboardIcon, CreditCardIcon, ShieldIcon, BuildingIcon, ChevronRightIcon,
+  TrendingUpIcon, AlertCircleIcon
 } from 'components/ui/Icons';
 import { formatDistanceToNow } from 'date-fns';
 
