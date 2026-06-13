@@ -39,3 +39,6 @@ alter table message_threads add column if not exists admin_invited boolean defau
 alter table message_threads add column if not exists admin_invited_at timestamptz;
 alter table message_threads add column if not exists admin_invited_by uuid references profiles(id);
 alter table message_threads add column if not exists dispute_reason text;
+
+-- Add rejection_reason to seeker_documents
+alter table seeker_documents add column if not exists rejection_reason text;
