@@ -8,6 +8,8 @@ import { AuthProvider } from './context/AuthContext';
 import { ThemeProvider } from './context/ThemeContext';
 import { RoleRoute, PublicOnlyRoute } from './components/shared/RouteGuards';
 import PlaceholderPage from './pages/PlaceholderPage';
+import SuspendedPage from './pages/SuspendedPage';
+import NotFoundPage from './pages/NotFoundPage';
 
 // Public
 import HomePage from './pages/HomePage';
@@ -74,7 +76,7 @@ export default function App() {
               <Route path="/" element={<HomePage />} />
               <Route path="/jobs" element={<JobsPage />} />
               <Route path="/jobs/:jobId" element={<JobDetailPage />} />
-              <Route path="/suspended" element={<PlaceholderPage title="Account Suspended" />} />
+              <Route path="/suspended" element={<SuspendedPage />} />
 
               {/* Auth */}
               <Route path="/auth/login" element={<PublicOnlyRoute><LoginPage /></PublicOnlyRoute>} />
@@ -112,7 +114,7 @@ export default function App() {
               <Route path="/admin/settings" element={<RoleRoute role="admin"><AdminSettings /></RoleRoute>} />
               <Route path="/admin/inbox" element={<RoleRoute role="admin"><AdminInbox /></RoleRoute>} />
 
-              <Route path="*" element={<PlaceholderPage title="404 — Page Not Found" />} />
+              <Route path="*" element={<NotFoundPage />} />
             </Routes>
           </Suspense>
           <ToastContainer position="top-right" autoClose={4000} theme="dark" />

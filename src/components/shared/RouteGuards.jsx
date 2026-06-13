@@ -5,8 +5,9 @@ import { useAuth } from 'context/AuthContext';
 // ─── Loading Spinner ──────────────────────────────────────────────────────────
 function LoadingScreen() {
   return (
-    <div className="auth-loading">
-      <div className="auth-loading__spinner" />
+    <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#05080f' }}>
+      <div style={{ width: 32, height: 32, border: '3px solid rgba(245,158,11,0.2)', borderTop: '3px solid #f59e0b', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
+      <style>{'@keyframes spin { to { transform: rotate(360deg); } }'}</style>
     </div>
   );
 }
