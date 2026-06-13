@@ -3,7 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../context/AuthContext';
-import { useFileUpload } from '../../hooks';
+import { useFileUpload } from 'hooks';
 import { toast } from 'react-toastify';
 import AppShell from '../../components/layout/AppShell';
 import { PlusIcon, XIcon, ArrowLeftIcon, UploadIcon } from '../../components/ui/Icons';

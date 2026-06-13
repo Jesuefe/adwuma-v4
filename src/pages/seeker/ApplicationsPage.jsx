@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import AppShell from '../../components/layout/AppShell';
-import { useSeekerApplications } from '../../hooks';
+import { useSeekerApplications } from 'hooks';
 import { formatMoney } from '../../lib/currency';
 import { formatDistanceToNow } from 'date-fns';
 import { BriefcaseIcon, ChevronRightIcon, SearchIcon } from '../../components/ui/Icons';

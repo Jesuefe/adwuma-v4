@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import AppShell from '../../components/layout/AppShell';
 import { useAuth } from '../../context/AuthContext';
-import { useSeekerApplications } from '../../hooks';
+import { useSeekerApplications } from 'hooks';
 import { formatMoney } from '../../lib/currency';
 import { BriefcaseIcon, CheckCircleIcon, ClockIcon, ChevronRightIcon, SearchIcon } from '../../components/ui/Icons';
 import { useQuery } from '@tanstack/react-query';

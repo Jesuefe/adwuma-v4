@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import AppShell from '../../components/layout/AppShell';
 import { useAuth } from '../../context/AuthContext';
-import { useAgentApplications, useAgentKYC, useWallet } from '../../hooks';
+import { useAgentApplications, useAgentKYC, useWallet } from 'hooks';
 import { supabase } from '../../lib/supabase';
 import { useQuery } from '@tanstack/react-query';
 import { formatMoney } from '../../lib/currency';

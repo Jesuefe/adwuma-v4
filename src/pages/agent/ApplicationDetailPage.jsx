@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { supabase, subscribeToMessages } from '../../lib/supabase';
-import { useFileUpload } from '../../hooks';
+import { useFileUpload } from 'hooks';
 import { formatMoney } from '../../lib/currency';
 import { format, formatDistanceToNow } from 'date-fns';
 import { toast } from 'react-toastify';

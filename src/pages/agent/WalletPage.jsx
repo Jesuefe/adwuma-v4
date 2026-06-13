@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import AppShell from '../../components/layout/AppShell';
 import { useAuth } from '../../context/AuthContext';
-import { useWallet, useWalletTransactions } from '../../hooks';
+import { useWallet, useWalletTransactions } from 'hooks';
 import { supabase } from '../../lib/supabase';
 import { useQueryClient } from '@tanstack/react-query';
 import { formatMoney } from '../../lib/currency';
