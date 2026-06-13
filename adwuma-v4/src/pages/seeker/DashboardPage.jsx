@@ -5,8 +5,6 @@ import { useAuth } from '../../context/AuthContext';
 import { useSeekerApplications } from '../../hooks';
 import { formatMoney } from '../../lib/currency';
 import { BriefcaseIcon, CheckCircleIcon, ClockIcon, ChevronRightIcon, SearchIcon } from '../../components/ui/Icons';
-import { useQuery } from '@tanstack/react-query';
-import { supabase } from '../../lib/supabase';
 
 const STEP_NAMES = ['Received', 'Payment', 'Docs Review', 'Processing', 'Offer', 'Relocation'];
 
@@ -33,18 +31,6 @@ function MiniTracker({ steps = [] }) {
 export default function SeekerDashboard() {
   const { profile } = useAuth();
   const { data: applications = [], isLoading } = useSeekerApplications();
-
-  const { data: featuredJobs = [] } = useQuery({
-    queryKey: ['featured_jobs_dash'],
-    queryFn: async () => {
-      const { data } = await supabase.from('jobs')
-        .select('id, title, company_name, service_fee, service_fee_currency, company_logo_url, countries(name, code)')
-        .eq('status', 'active')
-        .order('is_featured', { ascending: false })
-        .limit(4);
-      return data || [];
-    },
-  });
 
   const active = applications.filter(a => a.status !== 'refunded');
   const recent = active.slice(0, 3);
@@ -122,31 +108,6 @@ export default function SeekerDashboard() {
           </div>
         )}
 
-        {/* Featured Jobs */}
-        {featuredJobs.length > 0 && (
-          <>
-            <div className="section-header" style={{ marginTop: 28 }}>
-              <div className="section-title">Available Jobs</div>
-              <Link to="/jobs" style={styles.seeAll}>See all</Link>
-            </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 8 }}>
-              {featuredJobs.map(job => (
-                <Link key={job.id} to={`/jobs/${job.id}`} style={styles.featuredJobRow}>
-                  {job.company_logo_url
-                    ? <img src={job.company_logo_url} alt={job.company_name} style={styles.jobLogo} />
-                    : <div style={styles.jobLogoPlaceholder}>{job.countries?.code || '🌍'}</div>}
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={styles.featJobTitle}>{job.title}</div>
-                    <div style={styles.featJobMeta}>{job.company_name} · {job.countries?.name}</div>
-                  </div>
-                  <div style={styles.featJobFee}>{formatMoney(job.service_fee, job.service_fee_currency, { compact: true })}</div>
-                  <ChevronRightIcon size={15} style={{ color: 'var(--text-3)', flexShrink: 0 }} />
-                </Link>
-              ))}
-            </div>
-          </>
-        )}
-
         {/* Quick links */}
         <div className="section-header" style={{ marginTop: 28 }}>
           <div className="section-title">Quick Links</div>
@@ -185,12 +146,6 @@ const styles = {
   appFee: { fontSize: 12, color: 'var(--text-3)' },
   appCardArrow: { position: 'absolute', right: 16, top: '50%', transform: 'translateY(-50%)' },
   browseBtn: { background: 'var(--gold)', color: '#000', fontWeight: 600, fontSize: 14, padding: '10px 20px', borderRadius: 8, textDecoration: 'none', marginTop: 8 },
-  featuredJobRow: { display: 'flex', alignItems: 'center', gap: 12, background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 10, padding: '12px 14px', textDecoration: 'none' },
-  jobLogo: { width: 36, height: 36, borderRadius: 8, objectFit: 'cover', border: '1px solid var(--border)', flexShrink: 0 },
-  jobLogoPlaceholder: { width: 36, height: 36, borderRadius: 8, background: 'var(--gold-dim)', border: '1px solid var(--gold-border)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14, flexShrink: 0 },
-  featJobTitle: { fontSize: 14, fontWeight: 600, color: 'var(--text-1)', marginBottom: 2 },
-  featJobMeta: { fontSize: 11, color: 'var(--text-2)' },
-  featJobFee: { fontSize: 12, fontWeight: 700, color: 'var(--gold-text)', flexShrink: 0 },
   quickLink: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 10, padding: '14px 16px', textDecoration: 'none' },
   quickLinkLabel: { fontSize: 14, fontWeight: 500, color: 'var(--text-1)', marginBottom: 2 },
   quickLinkSub: { fontSize: 12, color: 'var(--text-3)' },
