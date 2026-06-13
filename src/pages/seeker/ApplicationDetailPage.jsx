@@ -4,9 +4,8 @@ import AppShell from '../../components/layout/AppShell';
 import { useAuth } from '../../context/AuthContext';
 import { supabase, subscribeToMessages } from '../../lib/supabase';
 import { useFileUpload } from '../../hooks';
-import { differenceInDays, format } from 'date-fns';
+import { differenceInDays, format, formatDistanceToNow } from 'date-fns';
 import { formatMoney } from '../../lib/currency';
-import { formatDistanceToNow, format } from 'date-fns';
 import { CheckIcon, ClockIcon, ArrowLeftIcon, DownloadIcon, SendIcon, MessageIcon } from '../../components/ui/Icons';
 
 const STEPS = [
