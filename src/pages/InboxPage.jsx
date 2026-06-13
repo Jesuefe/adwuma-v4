@@ -77,11 +77,42 @@ function MessageArea({ thread, userId, isAdmin, onBack }) {
   const [blocked, setBlocked] = useState(false);
   const endRef = useRef(null);
 
+  const lastMessageIdRef = useRef(null);
+
   useEffect(() => {
     if (!thread) return;
+
+    // Initial load
     loadMessages();
-    const ch = subscribeToMessages(thread.id, (p) => setMessages(m => [...m, p.new]));
-    return () => supabase.removeChannel(ch);
+
+    // Realtime subscription
+    const ch = subscribeToMessages(thread.id, (p) => {
+      const newMsg = p.new;
+      setMessages(m => {
+        if (m.find(msg => msg.id === newMsg.id)) return m;
+        return [...m, newMsg];
+      });
+    });
+
+    // 2-second polling fallback (catches messages realtime misses)
+    const poll = setInterval(async () => {
+      const { data } = await supabase.from('messages')
+        .select('*')
+        .eq('thread_id', thread.id)
+        .order('created_at');
+      if (data) {
+        setMessages(prev => {
+          // Only update if count changed
+          if (data.length !== prev.length) return data;
+          return prev;
+        });
+      }
+    }, 2000);
+
+    return () => {
+      supabase.removeChannel(ch);
+      clearInterval(poll);
+    };
   }, [thread?.id]);
 
   useEffect(() => { endRef.current?.scrollIntoView({ behavior: 'smooth' }); }, [messages]);

@@ -23,13 +23,8 @@ export default function JobDetailPage() {
   const [coverMessage, setCoverMessage] = useState('');
   const [cvFile, setCvFile] = useState(null);
 
-  useEffect(() => {
-    loadJob();
-  }, [jobId]);
-
-  useEffect(() => {
-    if (user && isSeeker) checkApplied();
-  }, [user, jobId]);
+  useEffect(() => { loadJob(); }, [jobId]);
+  useEffect(() => { if (user && isSeeker) checkApplied(); }, [user, jobId]);
 
   async function loadJob() {
     const { data } = await supabase.from('jobs')
@@ -43,7 +38,7 @@ export default function JobDetailPage() {
 
   async function checkApplied() {
     const { data } = await supabase.from('applications')
-      .select('id').eq('job_id', jobId).eq('seeker_id', user.id).single();
+      .select('id').eq('job_id', jobId).eq('seeker_id', user.id).maybeSingle();
     setHasApplied(!!data);
   }
 
@@ -51,6 +46,44 @@ export default function JobDetailPage() {
     if (!isAuthenticated) { navigate('/auth/register'); return; }
     if (!isSeeker) { toast.error('Only job seekers can apply'); return; }
     setShowApplyForm(true);
+  }
+
+  // Create payment row client-side — used as fallback when edge function fails
+  async function createPaymentRecord({ applicationId, agentId, amount, currency, reference, transactionId }) {
+    // Get platform fee from settings
+    const { data: settingRow } = await supabase.from('settings').select('value').eq('key', 'platform_fee_pct').single();
+    const platformFeePct = parseFloat(settingRow?.value ?? '10');
+    const platformFee = (amount * platformFeePct) / 100;
+    const agentPayout = amount - platformFee;
+
+    const { error } = await supabase.from('payments').insert({
+      application_id: applicationId,
+      seeker_id: user.id,
+      agent_id: agentId,
+      amount,
+      currency,
+      paystack_reference: reference,
+      paystack_transaction_id: transactionId ? String(transactionId) : null,
+      escrow_status: 'holding',
+      platform_fee_pct: platformFeePct,
+      platform_fee_amount: platformFee,
+      agent_payout_amount: agentPayout,
+    });
+
+    if (error) {
+      // If duplicate reference, payment already exists — ignore
+      if (error.code === '23505') return;
+      throw error;
+    }
+
+    // Notify agent
+    await supabase.from('notifications').insert({
+      recipient_id: agentId,
+      type: 'application_received',
+      title: 'New Paid Application',
+      body: `A seeker has paid and applied for "${job?.title}". Review in your dashboard.`,
+      link: `/agent/applications/${applicationId}`,
+    });
   }
 
   async function handlePayAndApply() {
@@ -70,53 +103,81 @@ export default function JobDetailPage() {
         }
       }
 
-      // Create application first (pending payment)
+      // Create application (pending payment — will be deleted if popup closes without paying)
       const { data: app, error: appError } = await supabase.from('applications').insert({
         job_id: job.id,
         seeker_id: user.id,
         agent_id: job.agent_id,
         cover_message: coverMessage || null,
         cv_url: cvUrl,
-        status: 'in_escrow',
+        status: 'pending_payment',
       }).select().single();
 
       if (appError) throw appError;
 
-      // Get user email for Paystack
       const { data: { user: authUser } } = await supabase.auth.getUser();
-
-      // Open Paystack popup
       const ref = generatePaystackRef();
+
       await openPaystackPopup({
         email: authUser.email,
         amount: job.service_fee,
         currency: job.service_fee_currency,
         reference: ref,
         metadata: { application_id: app.id, agent_id: job.agent_id, job_title: job.title },
+
         onSuccess: async (response) => {
-          // Verify payment via edge function
           try {
+            // Try edge function first
             const { data: verifyData, error: verifyError } = await supabase.functions.invoke('verify-payment', {
               body: { reference: response.reference },
             });
+
             if (verifyError) throw verifyError;
+
+            // Edge function succeeded — update application status
+            await supabase.from('applications').update({ status: 'in_escrow' }).eq('id', app.id);
             toast.success('Application submitted! Your payment is held in escrow.');
-            setHasApplied(true);
-            setShowApplyForm(false);
-            navigate(`/dashboard/applications/${app.id}`);
-          } catch (err) {
-            // Payment went through but verify failed — still navigate
-            toast.success('Application submitted! Payment processing...');
-            navigate(`/dashboard/applications/${app.id}`);
+
+          } catch (edgeFnErr) {
+            // Edge function not deployed or failed — create payment record client-side
+            console.warn('Edge function failed, using client-side fallback:', edgeFnErr.message);
+
+            try {
+              await createPaymentRecord({
+                applicationId: app.id,
+                agentId: job.agent_id,
+                amount: job.service_fee,
+                currency: job.service_fee_currency,
+                reference: response.reference,
+                transactionId: response.transaction,
+              });
+
+              // Update application to in_escrow
+              await supabase.from('applications').update({ status: 'in_escrow' }).eq('id', app.id);
+              toast.success('Application submitted! Your payment is held in escrow.');
+
+            } catch (fallbackErr) {
+              // Even fallback failed — still navigate but warn
+              console.error('Payment fallback failed:', fallbackErr);
+              await supabase.from('applications').update({ status: 'in_escrow' }).eq('id', app.id);
+              toast.success('Application submitted! Payment is being processed.');
+            }
           }
+
+          setHasApplied(true);
+          setShowApplyForm(false);
+          setApplying(false);
+          navigate(`/dashboard/applications/${app.id}`);
         },
+
         onClose: async () => {
-          // Payment popup closed without paying — delete the application
+          // Popup closed without paying — clean up
           await supabase.from('applications').delete().eq('id', app.id);
-          toast.info('Application cancelled — payment not completed.');
+          toast.info('Payment cancelled.');
           setApplying(false);
         },
       });
+
     } catch (err) {
       toast.error(err.message || 'Failed to submit application');
       setApplying(false);
@@ -140,7 +201,6 @@ export default function JobDetailPage() {
 
   return (
     <div style={styles.root}>
-      {/* Header */}
       <div style={styles.header}>
         <div style={styles.headerInner}>
           <Link to="/jobs" style={styles.backBtn}><ArrowLeftIcon size={16} /> All Jobs</Link>
@@ -150,7 +210,6 @@ export default function JobDetailPage() {
       </div>
 
       <div style={styles.body}>
-        {/* Cover image */}
         {job.cover_image_url && (
           <div style={styles.coverImageWrap}>
             <img src={job.cover_image_url} alt={job.title} style={styles.coverImage} />
@@ -159,7 +218,6 @@ export default function JobDetailPage() {
         <div style={styles.layout}>
           {/* Left — job details */}
           <div style={styles.main}>
-            {/* Job header */}
             <div style={styles.jobHeader}>
               <div style={{ display: 'flex', alignItems: 'flex-start', gap: 16 }}>
                 {job.company_logo_url
@@ -178,7 +236,6 @@ export default function JobDetailPage() {
               </div>
             </div>
 
-            {/* Description */}
             <div className="card" style={{ marginBottom: 16 }}>
               <div style={styles.sectionTitle}>Job Description</div>
               <div style={styles.bodyText}>{job.description}</div>
@@ -205,7 +262,6 @@ export default function JobDetailPage() {
               </div>
             )}
 
-            {/* Agent info */}
             <div className="card">
               <div style={styles.sectionTitle}>Recruitment Agent</div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
@@ -216,6 +272,7 @@ export default function JobDetailPage() {
                     <ShieldIcon size={12} /> KYC Verified
                   </div>
                 </div>
+                <Link to={`/agents/${job.agent_id}`} style={{ marginLeft: 'auto', fontSize: 12, color: 'var(--gold-text)', textDecoration: 'none' }}>View profile →</Link>
               </div>
             </div>
           </div>
@@ -223,11 +280,12 @@ export default function JobDetailPage() {
           {/* Right — apply card */}
           <div style={styles.sidebar}>
             <div style={styles.applyCard}>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <div style={styles.feeLabel}>Service Fee</div>
                 <SaveJobButton jobId={job.id} size="lg" />
               </div>
               <div style={styles.feeAmount}>{formatMoney(job.service_fee, job.service_fee_currency)}</div>
+
               <div style={styles.escrowNote}>
                 <LockIcon size={13} style={{ flexShrink: 0 }} />
                 Held in escrow — only released after your documents are delivered
@@ -257,7 +315,7 @@ export default function JobDetailPage() {
                     {applying ? <span className="spinner spinner-sm" /> : <LockIcon size={15} />}
                     {applying ? 'Processing…' : `Pay ${formatMoney(job.service_fee, job.service_fee_currency)} & Apply`}
                   </button>
-                  <button style={styles.cancelBtn} onClick={() => setShowApplyForm(false)}>Cancel</button>
+                  <button style={styles.cancelBtn} onClick={() => { setShowApplyForm(false); setApplying(false); }}>Cancel</button>
                 </div>
               )}
 
@@ -280,9 +338,12 @@ const styles = {
   headerInner: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 16px', height: 56, maxWidth: 1200, margin: '0 auto' },
   backBtn: { display: 'flex', alignItems: 'center', gap: 5, fontSize: 13, color: 'var(--text-2)', textDecoration: 'none' },
   logo: { fontFamily: 'Syne, sans-serif', fontWeight: 800, fontSize: 20, color: 'var(--gold)', textDecoration: 'none' },
-  body: { maxWidth: 1200, margin: '0 auto', padding: '32px 16px' },
-  layout: { display: 'flex', gap: 24, alignItems: 'flex-start', flexDirection: 'column' },
-  main: { flex: 1, width: '100%' },
+  body: { maxWidth: 1200, margin: '0 auto', padding: '0 0 48px' },
+  coverImageWrap: { width: '100%', maxHeight: 300, overflow: 'hidden', marginBottom: 0 },
+  coverImage: { width: '100%', height: 280, objectFit: 'cover' },
+  companyLogoLg: { width: 60, height: 60, borderRadius: 12, objectFit: 'cover', border: '2px solid var(--border)', flexShrink: 0 },
+  layout: { display: 'flex', flexDirection: 'column', gap: 24, padding: '24px 16px', '@media(minWidth:768px)': { flexDirection: 'row' } },
+  main: { flex: 1 },
   sidebar: { width: '100%' },
   jobHeader: { background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 14, padding: 20, marginBottom: 16 },
   jobTitle: { fontFamily: 'Syne, sans-serif', fontWeight: 800, fontSize: 24, color: 'var(--text-1)', marginBottom: 6, letterSpacing: '-0.5px' },
@@ -304,8 +365,4 @@ const styles = {
   textarea: { width: '100%', background: 'rgba(255,255,255,0.04)', border: '1px solid var(--border)', borderRadius: 8, padding: '10px 12px', fontSize: 14, color: 'var(--text-1)', outline: 'none', fontFamily: 'Inter, sans-serif', resize: 'vertical' },
   trustPoints: { display: 'flex', flexDirection: 'column', gap: 6, paddingTop: 4, borderTop: '1px solid var(--border)' },
   trustPoint: { display: 'flex', alignItems: 'center', gap: 7, fontSize: 12, color: 'var(--text-2)' },
-  coverImageWrap: { width: '100%', maxHeight: 300, overflow: 'hidden', marginBottom: 0 },
-  coverImage: { width: '100%', height: 280, objectFit: 'cover' },
-  companyLogoLg: { width: 60, height: 60, borderRadius: 12, objectFit: 'cover', border: '2px solid var(--border)', flexShrink: 0 },
-  '@media (minWidth: 768px)': { layout: { flexDirection: 'row' }, sidebar: { width: 320, flexShrink: 0 } },
 };

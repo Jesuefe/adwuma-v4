@@ -39,14 +39,17 @@ export default function ApplicationDetailPage() {
   }, [applicationId]);
 
   useEffect(() => {
-    if (thread) {
-      loadMessages();
-      const channel = subscribeToMessages(thread.id, (payload) => {
-        setMessages(m => [...m, payload.new]);
-      });
-      return () => supabase.removeChannel(channel);
-    }
-  }, [thread]);
+    if (!thread) return;
+    loadMessages();
+    const channel = subscribeToMessages(thread.id, (payload) => {
+      setMessages(m => m.find(msg => msg.id === payload.new.id) ? m : [...m, payload.new]);
+    });
+    const poll = setInterval(async () => {
+      const { data } = await supabase.from('messages').select('*').eq('thread_id', thread.id).order('created_at');
+      if (data) setMessages(prev => data.length !== prev.length ? data : prev);
+    }, 2000);
+    return () => { supabase.removeChannel(channel); clearInterval(poll); };
+  }, [thread?.id]);
 
   useEffect(() => {
     msgEndRef.current?.scrollIntoView({ behavior: 'smooth' });

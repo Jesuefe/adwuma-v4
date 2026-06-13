@@ -32,12 +32,19 @@ export default function AgentApplicationDetailPage() {
 
   useEffect(() => { loadApp(); }, [applicationId]);
   useEffect(() => {
-    if (thread) {
-      loadMessages();
-      const ch = subscribeToMessages(thread.id, (p) => setMessages(m => [...m, p.new]));
-      return () => supabase.removeChannel(ch);
-    }
-  }, [thread]);
+    if (!thread) return;
+    loadMessages();
+    // Realtime
+    const ch = subscribeToMessages(thread.id, (p) => {
+      setMessages(m => m.find(msg => msg.id === p.new.id) ? m : [...m, p.new]);
+    });
+    // 2-second polling fallback
+    const poll = setInterval(async () => {
+      const { data } = await supabase.from('messages').select('*').eq('thread_id', thread.id).order('created_at');
+      if (data) setMessages(prev => data.length !== prev.length ? data : prev);
+    }, 2000);
+    return () => { supabase.removeChannel(ch); clearInterval(poll); };
+  }, [thread?.id]);
   useEffect(() => { msgEndRef.current?.scrollIntoView({ behavior: 'smooth' }); }, [messages]);
 
   async function loadApp() {
