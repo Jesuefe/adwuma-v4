@@ -205,7 +205,7 @@ export default function LoginPage() {
       <div className="login-root">
         {/* Hero / branding */}
         <div className="login-hero">
-          <div className="login-logo">Adwuma</div>
+          <div className="login-logo">Ajuma Link</div>
           <h1 className="login-tagline">Work, verified.<br />Payments, protected.</h1>
           <div className="login-pills">
             <span className="login-pill">✓ KYC-verified agents</span>

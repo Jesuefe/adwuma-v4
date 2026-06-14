@@ -152,7 +152,7 @@ export default function RegisterPage() {
       <div className="reg-root">
         {/* Top bar */}
         <div className="reg-header">
-          <div className="reg-logo">Adwuma</div>
+          <div className="reg-logo">Ajuma Link</div>
           <Link to="/auth/login" className="reg-signin-link">
             Already have an account? <span>Sign in</span>
           </Link>

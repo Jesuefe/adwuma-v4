@@ -104,7 +104,7 @@ function NotifBell() {
 }
 
 // ─── App Shell ────────────────────────────────────────────────────────────────
-export default function AppShell({ children, title = 'Adwuma' }) {
+export default function AppShell({ children, title = 'Ajuma Link' }) {
   const { profile, signOut } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();

@@ -51,7 +51,7 @@ export default function AgentPublicProfilePage() {
       <div style={styles.header}>
         <div style={styles.headerInner}>
           <Link to="/jobs" style={styles.backBtn}><ArrowLeftIcon size={16} /> Browse Jobs</Link>
-          <Link to="/" style={styles.logo}>Adwuma</Link>
+          <Link to="/" style={styles.logo}>Ajuma Link</Link>
           <div style={{ width: 80 }} />
         </div>
       </div>
@@ -119,7 +119,7 @@ export default function AgentPublicProfilePage() {
                     </div>
                   </div>
                   <div style={styles.jobFee}>{formatMoney(job.service_fee, job.service_fee_currency)} service fee</div>
-                  <div style={{ fontSize: 11, color: 'var(--gold)', fontWeight: 600, marginTop: 4 }}>
+                  <div style={{ fontSize: 11, color: 'var(--brand)', fontWeight: 600, marginTop: 4 }}>
                     {isAuthenticated ? 'View & Apply →' : 'Sign up to Apply →'}
                   </div>
                 </Link>
@@ -136,7 +136,7 @@ const styles = {
   header: { position: 'sticky', top: 0, zIndex: 50, background: 'rgba(5,8,15,0.92)', backdropFilter: 'blur(12px)', borderBottom: '1px solid var(--border)' },
   headerInner: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 16px', height: 56, maxWidth: 900, margin: '0 auto' },
   backBtn: { display: 'flex', alignItems: 'center', gap: 5, fontSize: 13, color: 'var(--text-2)', textDecoration: 'none' },
-  logo: { fontFamily: 'Syne, sans-serif', fontWeight: 800, fontSize: 20, color: 'var(--gold)', textDecoration: 'none' },
+  logo: { fontFamily: 'Syne, sans-serif', fontWeight: 800, fontSize: 20, color: 'var(--brand)', textDecoration: 'none' },
   body: { maxWidth: 900, margin: '0 auto', padding: '28px 16px 48px' },
   agentAvatar: { width: 64, height: 64, borderRadius: '50%', background: 'var(--gold-dim)', border: '2px solid var(--gold-border)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22, fontWeight: 700, color: 'var(--gold-text)', flexShrink: 0 },
   agentName: { fontFamily: 'Syne, sans-serif', fontWeight: 800, fontSize: 22, color: 'var(--text-1)', marginBottom: 4 },

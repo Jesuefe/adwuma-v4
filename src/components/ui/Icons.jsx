@@ -22,6 +22,7 @@ export const CheckIcon = (p) => <Icon {...p} d="M20 6L9 17l-5-5" />;
 export const XIcon = (p) => <Icon {...p} d={<><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></>} />;
 export const ChevronRightIcon = (p) => <Icon {...p} d="M9 18l6-6-6-6" />;
 export const ChevronDownIcon = (p) => <Icon {...p} d="M6 9l6 6 6-6" />;
+export const ChevronUpIcon = (p) => <Icon {...p} d="M18 15l-6-6-6 6" />;
 export const ArrowLeftIcon = (p) => <Icon {...p} d={<><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></>} />;
 export const MapPinIcon = (p) => <Icon {...p} d={<><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></>} />;
 export const ClockIcon = (p) => <Icon {...p} d={<><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></>} />;

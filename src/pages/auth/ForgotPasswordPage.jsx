@@ -27,7 +27,7 @@ export default function ForgotPasswordPage() {
     <div style={styles.root}>
       <div style={styles.card}>
         <Link to="/auth/login" style={styles.back}>← Back to login</Link>
-        <div style={styles.logo}>Adwuma</div>
+        <div style={styles.logo}>Ajuma Link</div>
 
         {!sent ? (
           <>

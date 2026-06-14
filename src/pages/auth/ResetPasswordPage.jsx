@@ -47,7 +47,7 @@ export default function ResetPasswordPage() {
       `}</style>
       <div style={styles.root}>
         <div style={styles.card}>
-          <div style={styles.logo}>Adwuma</div>
+          <div style={styles.logo}>Ajuma Link</div>
           <h2 style={styles.title}>Set new password</h2>
           <p style={styles.sub}>Enter your new password below.</p>
 
@@ -86,7 +86,7 @@ export default function ResetPasswordPage() {
 const styles = {
   root: { minHeight: '100vh', minHeight: '100dvh', background: '#05080f', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24, fontFamily: "'Inter', sans-serif" },
   card: { width: '100%', maxWidth: 400 },
-  logo: { fontFamily: "'Syne', sans-serif", fontWeight: 800, fontSize: 22, color: '#f59e0b', marginBottom: 28 },
+  logo: { fontFamily: "'Syne', sans-serif", fontWeight: 800, fontSize: 22, color: 'var(--brand)', marginBottom: 28 },
   title: { fontFamily: "'Syne', sans-serif", fontWeight: 700, fontSize: 24, color: '#f0f0f0', marginBottom: 8 },
   sub: { fontSize: 14, color: '#8b8fa8', marginBottom: 28 },
   waiting: { padding: '24px 0' },
@@ -97,5 +97,5 @@ const styles = {
   pwWrap: { position: 'relative' },
   input: { width: '100%', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.09)', borderRadius: 10, padding: '13px 14px', fontSize: 15, color: '#f0f0f0', outline: 'none', fontFamily: 'Inter, sans-serif', WebkitAppearance: 'none' },
   eyeBtn: { position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: '#8b8fa8', display: 'flex', alignItems: 'center' },
-  btn: { background: '#f59e0b', color: '#000', border: 'none', borderRadius: 10, padding: '14px 20px', fontSize: 15, fontWeight: 700, cursor: 'pointer', fontFamily: 'Inter, sans-serif', minHeight: 48 },
+  btn: { background: 'var(--brand)', color: '#000', border: 'none', borderRadius: 10, padding: '14px 20px', fontSize: 15, fontWeight: 700, cursor: 'pointer', fontFamily: 'Inter, sans-serif', minHeight: 48 },
 };

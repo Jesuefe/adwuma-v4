@@ -1,159 +1,234 @@
 import React, { useState } from 'react';
-import AppShell from '../../components/layout/AppShell';
-import { useAuth } from '../../context/AuthContext';
-import { useWallet, useWalletTransactions } from 'hooks';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '../../lib/supabase';
-import { useQueryClient } from '@tanstack/react-query';
+import { useAuth } from '../../context/AuthContext';
 import { formatMoney } from '../../lib/currency';
-import { toast } from 'react-toastify';
 import { format } from 'date-fns';
-import { ArrowUpIcon, ArrowDownIcon, WalletIcon, AlertCircleIcon } from '../../components/ui/Icons';
-
-const CURRENCIES = ['NGN', 'GHS'];
+import { toast } from 'react-toastify';
+import AppShell from '../../components/layout/AppShell';
+import { DollarIcon, ArrowUpIcon, ClockIcon, CheckCircleIcon, AlertCircleIcon } from '../../components/ui/Icons';
 
 export default function WalletPage() {
   const { user } = useAuth();
-  const [currency, setCurrency] = useState('NGN');
-  const [showWithdraw, setShowWithdraw] = useState(false);
-  const { data: wallet, isLoading: walletLoading } = useWallet(currency);
-  const { data: txns = [], isLoading: txLoading } = useWalletTransactions(currency);
   const queryClient = useQueryClient();
+  const [showWithdraw, setShowWithdraw] = useState(false);
+  const [form, setForm] = useState({ bank_name: '', account_number: '', account_name: '', bank_code: '', amount: '' });
 
-  const [form, setForm] = useState({ amount: '', bankName: '', accountNumber: '', accountName: '', bankCode: '' });
-  const [submitting, setSubmitting] = useState(false);
+  const { data: wallet } = useQuery({
+    queryKey: ['wallet', user?.id],
+    queryFn: async () => {
+      const { data } = await supabase.from('agent_wallets').select('*').eq('agent_id', user.id).single();
+      return data;
+    },
+    enabled: !!user,
+  });
 
-  const handleWithdraw = async (e) => {
-    e.preventDefault();
-    if (!form.amount || !form.bankName || !form.accountNumber || !form.accountName) {
-      toast.error('Fill in all required fields'); return;
-    }
-    if (Number(form.amount) > (wallet?.balance || 0)) {
-      toast.error('Amount exceeds available balance'); return;
-    }
-    if (Number(form.amount) < 1000) {
-      toast.error('Minimum withdrawal is ₦1,000'); return;
-    }
-    setSubmitting(true);
-    try {
-      await supabase.from('withdrawals').insert({
-        agent_id: user.id, amount: Number(form.amount), currency,
-        bank_name: form.bankName, account_number: form.accountNumber,
-        account_name: form.accountName, bank_code: form.bankCode || null,
+  // Pending = payments in holding for this agent
+  const { data: pendingPayments = [] } = useQuery({
+    queryKey: ['pending_payments', user?.id],
+    queryFn: async () => {
+      const { data } = await supabase.from('payments')
+        .select('*, applications(jobs(title))')
+        .eq('agent_id', user.id)
+        .eq('escrow_status', 'holding')
+        .order('created_at', { ascending: false });
+      return data || [];
+    },
+    enabled: !!user,
+  });
+
+  const { data: transactions = [] } = useQuery({
+    queryKey: ['wallet_transactions', user?.id],
+    queryFn: async () => {
+      const { data } = await supabase.from('wallet_transactions')
+        .select('*').eq('agent_id', user.id)
+        .order('created_at', { ascending: false }).limit(50);
+      return data || [];
+    },
+    enabled: !!user,
+  });
+
+  const { data: withdrawals = [] } = useQuery({
+    queryKey: ['my_withdrawals', user?.id],
+    queryFn: async () => {
+      const { data } = await supabase.from('withdrawals')
+        .select('*').eq('agent_id', user.id)
+        .order('created_at', { ascending: false }).limit(20);
+      return data || [];
+    },
+    enabled: !!user,
+  });
+
+  const withdrawMutation = useMutation({
+    mutationFn: async (data) => {
+      if (Number(data.amount) > (wallet?.balance || 0)) throw new Error('Insufficient balance');
+      if (Number(data.amount) < 100) throw new Error('Minimum withdrawal is ₦100');
+      const { error } = await supabase.from('withdrawals').insert({
+        agent_id: user.id, ...data, amount: Number(data.amount), currency: 'NGN', status: 'pending',
       });
-      toast.success('Withdrawal request submitted! Admin will process within 2–3 business days.');
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success('Withdrawal request submitted — admin will process within 24 hours');
       setShowWithdraw(false);
-      setForm({ amount: '', bankName: '', accountNumber: '', accountName: '', bankCode: '' });
-      queryClient.invalidateQueries(['wallet', user.id, currency]);
-    } catch (err) { toast.error(err.message); }
-    setSubmitting(false);
+      setForm({ bank_name: '', account_number: '', account_name: '', bank_code: '', amount: '' });
+      queryClient.invalidateQueries(['my_withdrawals', user?.id]);
+    },
+    onError: (e) => toast.error(e.message),
+  });
+
+  const pendingTotal = pendingPayments.reduce((s, p) => s + (p.agent_payout_amount || 0), 0);
+  const balance = wallet?.balance || 0;
+  const isNegative = balance < 0;
+
+  const TX_COLORS = {
+    escrow_release: { color: 'var(--green)', label: 'Escrow Released', icon: '💰' },
+    posting_fee: { color: 'var(--error)', label: 'Posting Fee', icon: '📋' },
+    withdrawal: { color: 'var(--error)', label: 'Withdrawal', icon: '🏦' },
+    penalty: { color: 'var(--error)', label: 'Late Penalty', icon: '⚠️' },
+    refund: { color: 'var(--error)', label: 'Refund', icon: '↩️' },
+  };
+
+  const WITHDRAWAL_STATUS = {
+    pending: { color: 'var(--gold)', label: 'Pending' },
+    approved: { color: 'var(--brand)', label: 'Approved' },
+    processed: { color: 'var(--green)', label: 'Processed ✓' },
+    rejected: { color: 'var(--error)', label: 'Rejected' },
   };
 
   return (
     <AppShell title="Wallet">
-      <div className="page" style={{ maxWidth: 600, margin: '0 auto' }}>
+      <div className="page">
 
-        {/* Currency tabs */}
-        <div style={styles.currencyTabs}>
-          {CURRENCIES.map(c => (
-            <button key={c} style={{ ...styles.currencyTab, ...(currency === c ? styles.currencyTabActive : {}) }} onClick={() => setCurrency(c)}>{c}</button>
-          ))}
+        {/* Balance cards */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 24 }}>
+          {/* Available balance */}
+          <div style={{ background: isNegative ? 'rgba(239,68,68,0.08)' : 'var(--brand-dim)', border: `1px solid ${isNegative ? 'rgba(239,68,68,0.25)' : 'var(--brand-border)'}`, borderRadius: 'var(--radius-card)', padding: 20 }}>
+            <div style={{ fontSize: 12, color: 'var(--text-3)', marginBottom: 8, fontWeight: 500 }}>Available Balance</div>
+            <div style={{ fontWeight: 800, fontSize: 26, color: isNegative ? 'var(--error)' : 'var(--brand)', fontVariantNumeric: 'tabular-nums', letterSpacing: '-0.5px' }}>
+              {isNegative ? '-' : ''}{formatMoney(Math.abs(balance), 'NGN')}
+            </div>
+            {isNegative && <div style={{ fontSize: 11, color: 'var(--error)', marginTop: 6 }}>Debt recovered from next release</div>}
+          </div>
+
+          {/* Pending in escrow */}
+          <div style={{ background: 'var(--green-dim)', border: '1px solid var(--green-border)', borderRadius: 'var(--radius-card)', padding: 20 }}>
+            <div style={{ fontSize: 12, color: 'var(--text-3)', marginBottom: 8, fontWeight: 500 }}>🔒 Pending in Escrow</div>
+            <div style={{ fontWeight: 800, fontSize: 26, color: 'var(--green)', fontVariantNumeric: 'tabular-nums', letterSpacing: '-0.5px' }}>
+              {formatMoney(pendingTotal, 'NGN')}
+            </div>
+            <div style={{ fontSize: 11, color: 'var(--text-3)', marginTop: 6 }}>{pendingPayments.length} application{pendingPayments.length !== 1 ? 's' : ''} awaiting release</div>
+          </div>
         </div>
 
-        {/* Balance card */}
-        <div className="card-gold" style={styles.balanceCard}>
-          <WalletIcon size={20} style={{ color: 'var(--gold)', marginBottom: 8 }} />
-          <div style={styles.balanceLabel}>Available Balance</div>
-          {walletLoading ? (
-            <div className="spinner" style={{ margin: '12px 0' }} />
-          ) : (
-            <div style={{ ...styles.balanceAmount, color: (wallet?.balance || 0) < 0 ? 'var(--error)' : 'var(--gold-text)' }}>
-              {formatMoney(wallet?.balance || 0, currency)}
-            </div>
-          )}
-          {(wallet?.balance || 0) < 0 && (
-            <div style={styles.negativeNote}>
-              <AlertCircleIcon size={13} /> Negative balance will be recovered from your next payment
-            </div>
-          )}
-          <button
-            style={{ ...styles.withdrawBtn, opacity: (wallet?.balance || 0) <= 0 ? 0.5 : 1 }}
-            disabled={(wallet?.balance || 0) <= 0}
-            onClick={() => setShowWithdraw(true)}
-          >
-            Withdraw Funds
-          </button>
-        </div>
-
-        {/* Withdraw form */}
-        {showWithdraw && (
+        {/* Pending escrow details */}
+        {pendingPayments.length > 0 && (
           <div className="card" style={{ marginBottom: 20 }}>
-            <div style={styles.sectionTitle}>Withdrawal Request</div>
-            <form onSubmit={handleWithdraw} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-              <div>
-                <label className="input-label">Amount ({currency}) *</label>
-                <input className="input" type="number" min="1000" max={wallet?.balance}
-                  value={form.amount} onChange={e => setForm(f => ({ ...f, amount: e.target.value }))}
-                  placeholder="e.g. 50000" inputMode="numeric" />
-                <div style={{ fontSize: 11, color: 'var(--text-3)', marginTop: 5 }}>Min: {formatMoney(1000, currency)} · Max: {formatMoney(wallet?.balance || 0, currency)}</div>
-              </div>
-              <div>
-                <label className="input-label">Bank Name *</label>
-                <input className="input" value={form.bankName} onChange={e => setForm(f => ({ ...f, bankName: e.target.value }))} placeholder="e.g. Access Bank" />
-              </div>
-              <div className="grid-2">
-                <div>
-                  <label className="input-label">Account Number *</label>
-                  <input className="input" value={form.accountNumber} onChange={e => setForm(f => ({ ...f, accountNumber: e.target.value }))} placeholder="0123456789" inputMode="numeric" maxLength={10} />
-                </div>
-                <div>
-                  <label className="input-label">Bank Code</label>
-                  <input className="input" value={form.bankCode} onChange={e => setForm(f => ({ ...f, bankCode: e.target.value }))} placeholder="044" />
-                </div>
-              </div>
-              <div>
-                <label className="input-label">Account Name *</label>
-                <input className="input" value={form.accountName} onChange={e => setForm(f => ({ ...f, accountName: e.target.value }))} placeholder="John Doe" />
-              </div>
-              <div style={{ display: 'flex', gap: 8 }}>
-                <button type="button" className="btn btn-outline btn-full" onClick={() => setShowWithdraw(false)}>Cancel</button>
-                <button type="submit" className="btn btn-gold btn-full" disabled={submitting}>
-                  {submitting ? <span className="spinner spinner-sm" /> : null}
-                  {submitting ? 'Submitting…' : 'Submit Request'}
-                </button>
-              </div>
-            </form>
-          </div>
-        )}
-
-        {/* Transactions */}
-        <div style={styles.sectionTitle}>Transaction History</div>
-        {txLoading ? (
-          <div style={{ display: 'flex', justifyContent: 'center', padding: 40 }}><div className="spinner" /></div>
-        ) : txns.length === 0 ? (
-          <div className="empty-state">
-            <WalletIcon size={36} style={{ color: 'var(--text-3)' }} />
-            <div className="empty-title">No transactions yet</div>
-            <div className="empty-sub">Transactions will appear here when escrow is released to your wallet</div>
-          </div>
-        ) : (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-            {txns.map(tx => (
-              <div key={tx.id} style={styles.txRow}>
-                <div style={{ ...styles.txIcon, background: tx.type === 'credit' ? 'rgba(34,197,94,0.1)' : 'rgba(239,68,68,0.08)', color: tx.type === 'credit' ? '#22c55e' : '#ef4444' }}>
-                  {tx.type === 'credit' ? <ArrowDownIcon size={16} /> : <ArrowUpIcon size={16} />}
-                </div>
+            <div style={styles.sectionTitle}>🔒 Escrow Holdings</div>
+            <div style={{ fontSize: 13, color: 'var(--text-2)', marginBottom: 14 }}>These payments are held in escrow. Admin releases them after verifying your work.</div>
+            {pendingPayments.map(p => (
+              <div key={p.id} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '12px 0', borderBottom: '1px solid var(--border)' }}>
                 <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={styles.txDesc}>{tx.description}</div>
-                  <div style={styles.txTime}>{format(new Date(tx.created_at), 'MMM d, yyyy · HH:mm')}</div>
-                </div>
-                <div style={{ textAlign: 'right' }}>
-                  <div style={{ ...styles.txAmount, color: tx.type === 'credit' ? '#22c55e' : '#ef4444' }}>
-                    {tx.type === 'credit' ? '+' : '-'}{formatMoney(tx.amount, tx.currency)}
+                  <div style={{ fontSize: 13, fontWeight: 500, color: 'var(--text-1)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    {p.applications?.jobs?.title || 'Application'}
                   </div>
-                  <div style={styles.txBalance}>Bal: {formatMoney(tx.balance_after, tx.currency)}</div>
+                  <div style={{ fontSize: 11, color: 'var(--text-3)', marginTop: 2 }}>
+                    {format(new Date(p.created_at), 'MMM d, yyyy')} · You receive {formatMoney(p.agent_payout_amount, p.currency)} after 10% platform fee
+                  </div>
+                </div>
+                <div style={{ fontWeight: 700, fontSize: 15, color: 'var(--green)', flexShrink: 0, fontVariantNumeric: 'tabular-nums' }}>
+                  {formatMoney(p.amount, p.currency)}
                 </div>
               </div>
             ))}
+          </div>
+        )}
+
+        {/* Withdraw button */}
+        {balance > 0 && (
+          <button className="btn btn-brand btn-full" style={{ marginBottom: 20 }} onClick={() => setShowWithdraw(true)}>
+            <ArrowUpIcon size={18} /> Withdraw Funds
+          </button>
+        )}
+
+        {/* Withdraw form */}
+        {showWithdraw && (
+          <div className="card" style={{ marginBottom: 20, borderColor: 'var(--brand-border)' }}>
+            <div style={styles.sectionTitle}>Request Withdrawal</div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+              <div className="grid-2">
+                <div>
+                  <label className="input-label">Bank Name *</label>
+                  <input className="input" value={form.bank_name} onChange={e => setForm(f => ({ ...f, bank_name: e.target.value }))} placeholder="e.g. First Bank" />
+                </div>
+                <div>
+                  <label className="input-label">Bank Code</label>
+                  <input className="input" value={form.bank_code} onChange={e => setForm(f => ({ ...f, bank_code: e.target.value }))} placeholder="e.g. 011" />
+                </div>
+              </div>
+              <div>
+                <label className="input-label">Account Number *</label>
+                <input className="input" value={form.account_number} onChange={e => setForm(f => ({ ...f, account_number: e.target.value }))} placeholder="10-digit account number" maxLength={10} inputMode="numeric" />
+              </div>
+              <div>
+                <label className="input-label">Account Name *</label>
+                <input className="input" value={form.account_name} onChange={e => setForm(f => ({ ...f, account_name: e.target.value }))} placeholder="Name on account" />
+              </div>
+              <div>
+                <label className="input-label">Amount (NGN) *</label>
+                <input className="input" type="number" value={form.amount} onChange={e => setForm(f => ({ ...f, amount: e.target.value }))} placeholder="Enter amount" inputMode="numeric" max={balance} />
+                <div style={{ fontSize: 12, color: 'var(--text-3)', marginTop: 6 }}>Available: {formatMoney(balance, 'NGN')}</div>
+              </div>
+              <div style={{ display: 'flex', gap: 10 }}>
+                <button className="btn btn-outline" style={{ flex: 1 }} onClick={() => setShowWithdraw(false)}>Cancel</button>
+                <button className="btn btn-brand" style={{ flex: 1 }} onClick={() => withdrawMutation.mutate(form)} disabled={withdrawMutation.isPending || !form.bank_name || !form.account_number || !form.account_name || !form.amount}>
+                  {withdrawMutation.isPending ? <span className="spinner spinner-sm" /> : null}
+                  Submit Request
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Transaction history */}
+        <div className="card" style={{ marginBottom: 20 }}>
+          <div style={styles.sectionTitle}>Transaction History</div>
+          {transactions.length === 0 ? (
+            <div style={{ fontSize: 13, color: 'var(--text-3)', textAlign: 'center', padding: '24px 0' }}>No transactions yet</div>
+          ) : transactions.map(tx => {
+            const txInfo = TX_COLORS[tx.type] || { color: 'var(--text-2)', label: tx.type, icon: '•' };
+            const isCredit = tx.type === 'escrow_release';
+            return (
+              <div key={tx.id} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '12px 0', borderBottom: '1px solid var(--border)' }}>
+                <div style={{ width: 36, height: 36, borderRadius: '50%', background: isCredit ? 'var(--green-dim)' : 'var(--error-dim)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 16, flexShrink: 0 }}>{txInfo.icon}</div>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ fontSize: 13, fontWeight: 500, color: 'var(--text-1)' }}>{txInfo.label}</div>
+                  <div style={{ fontSize: 11, color: 'var(--text-3)' }}>{tx.description || format(new Date(tx.created_at), 'MMM d, yyyy')}</div>
+                </div>
+                <div style={{ fontWeight: 700, fontSize: 14, color: isCredit ? 'var(--green)' : 'var(--error)', flexShrink: 0, fontVariantNumeric: 'tabular-nums' }}>
+                  {isCredit ? '+' : '-'}{formatMoney(Math.abs(tx.amount), tx.currency || 'NGN')}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Withdrawal history */}
+        {withdrawals.length > 0 && (
+          <div className="card">
+            <div style={styles.sectionTitle}>Withdrawal Requests</div>
+            {withdrawals.map(w => {
+              const ws = WITHDRAWAL_STATUS[w.status] || WITHDRAWAL_STATUS.pending;
+              return (
+                <div key={w.id} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '12px 0', borderBottom: '1px solid var(--border)' }}>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontSize: 13, fontWeight: 500, color: 'var(--text-1)' }}>{formatMoney(w.amount, w.currency || 'NGN')}</div>
+                    <div style={{ fontSize: 11, color: 'var(--text-3)' }}>{w.bank_name} · {w.account_number} · {format(new Date(w.created_at), 'MMM d')}</div>
+                  </div>
+                  <span style={{ fontSize: 11, fontWeight: 600, color: ws.color, background: `${ws.color}15`, padding: '3px 10px', borderRadius: 999 }}>{ws.label}</span>
+                </div>
+              );
+            })}
           </div>
         )}
       </div>
@@ -162,19 +237,5 @@ export default function WalletPage() {
 }
 
 const styles = {
-  currencyTabs: { display: 'flex', gap: 8, marginBottom: 20 },
-  currencyTab: { padding: '8px 20px', borderRadius: 8, border: '1px solid var(--border)', background: 'none', color: 'var(--text-2)', fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: 'Inter, sans-serif' },
-  currencyTabActive: { background: 'var(--gold-dim)', borderColor: 'var(--gold-border)', color: 'var(--gold-text)' },
-  balanceCard: { marginBottom: 20, display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', padding: '32px 24px' },
-  balanceLabel: { fontSize: 13, color: 'var(--text-2)', marginBottom: 8 },
-  balanceAmount: { fontFamily: 'Syne, sans-serif', fontWeight: 800, fontSize: 40, letterSpacing: '-1px', marginBottom: 8 },
-  negativeNote: { display: 'flex', alignItems: 'center', gap: 5, fontSize: 12, color: 'var(--error)', marginBottom: 12 },
-  withdrawBtn: { background: 'var(--gold)', color: '#000', fontWeight: 700, fontSize: 15, border: 'none', borderRadius: 10, padding: '12px 32px', cursor: 'pointer', marginTop: 12, fontFamily: 'Inter, sans-serif' },
-  sectionTitle: { fontFamily: 'Syne, sans-serif', fontWeight: 700, fontSize: 15, color: 'var(--text-1)', marginBottom: 14 },
-  txRow: { display: 'flex', alignItems: 'center', gap: 12, background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 10, padding: '12px 14px' },
-  txIcon: { width: 36, height: 36, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
-  txDesc: { fontSize: 13, fontWeight: 500, color: 'var(--text-1)', marginBottom: 2 },
-  txTime: { fontSize: 11, color: 'var(--text-3)' },
-  txAmount: { fontSize: 14, fontWeight: 700, marginBottom: 2 },
-  txBalance: { fontSize: 11, color: 'var(--text-3)' },
+  sectionTitle: { fontWeight: 700, fontSize: 15, color: 'var(--text-1)', marginBottom: 14, paddingBottom: 12, borderBottom: '1px solid var(--border)' },
 };

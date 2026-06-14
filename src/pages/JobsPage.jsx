@@ -151,7 +151,7 @@ export default function JobsPage() {
       {/* Public header */}
       <div style={styles.header}>
         <div style={styles.headerInner}>
-          <Link to="/" style={styles.logo}>Adwuma</Link>
+          <Link to="/" style={styles.logo}>Ajuma Link</Link>
           <div style={{ display: 'flex', gap: 8 }}>
             <Link to="/auth/login" style={styles.loginBtn}>Sign in</Link>
             <Link to="/auth/register" style={styles.registerBtn}>Get started</Link>
@@ -166,9 +166,9 @@ export default function JobsPage() {
 const styles = {
   header: { position: 'sticky', top: 0, zIndex: 50, background: 'rgba(5,8,15,0.92)', backdropFilter: 'blur(12px)', borderBottom: '1px solid var(--border)' },
   headerInner: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 16px', height: 56, maxWidth: 1200, margin: '0 auto' },
-  logo: { fontFamily: 'Syne, sans-serif', fontWeight: 800, fontSize: 20, color: 'var(--gold)', textDecoration: 'none' },
+  logo: { fontFamily: 'Syne, sans-serif', fontWeight: 800, fontSize: 20, color: 'var(--brand)', textDecoration: 'none' },
   loginBtn: { fontSize: 13, fontWeight: 500, color: 'var(--text-2)', padding: '7px 14px', borderRadius: 8, textDecoration: 'none', border: '1px solid var(--border)' },
-  registerBtn: { fontSize: 13, fontWeight: 600, color: '#000', background: 'var(--gold)', padding: '7px 14px', borderRadius: 8, textDecoration: 'none' },
+  registerBtn: { fontSize: 13, fontWeight: 600, color: '#000', background: 'var(--brand)', padding: '7px 14px', borderRadius: 8, textDecoration: 'none' },
   body: { maxWidth: 1200, margin: '0 auto', padding: '28px 16px 48px' },
   searchSection: { marginBottom: 28 },
   pageTitle: { fontFamily: 'Syne, sans-serif', fontWeight: 800, fontSize: 28, color: 'var(--text-1)', marginBottom: 6, letterSpacing: '-0.5px' },
@@ -183,7 +183,7 @@ const styles = {
   jobCover: { width: '100%', height: 120, overflow: 'hidden' },
   jobCoverImg: { width: '100%', height: '100%', objectFit: 'cover' },
   jobCardBody: { padding: 16, display: 'flex', flexDirection: 'column', gap: 6 },
-  featuredBadge: { fontSize: 10, fontWeight: 700, color: '#000', background: 'var(--gold)', padding: '3px 10px', display: 'inline-block', margin: '8px 16px 0' },
+  featuredBadge: { fontSize: 10, fontWeight: 700, color: '#000', background: 'var(--brand)', padding: '3px 10px', display: 'inline-block', margin: '8px 16px 0' },
   jobCardTop: { display: 'flex', alignItems: 'center', gap: 10 },
   companyLogo: { width: 36, height: 36, borderRadius: 8, objectFit: 'cover', border: '1px solid var(--border)', flexShrink: 0 },
   jobCountry: { fontSize: 11, color: 'var(--text-3)', fontWeight: 500, marginBottom: 2 },
@@ -195,7 +195,7 @@ const styles = {
   agentInfo: { display: 'flex', alignItems: 'center', gap: 6 },
   agentAvatar: { width: 24, height: 24, borderRadius: '50%', background: 'var(--gold-dim)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 9, fontWeight: 700, color: 'var(--gold-text)' },
   agentName: { fontSize: 11, color: 'var(--text-3)' },
-  applyTag: { fontSize: 11, fontWeight: 600, color: 'var(--gold)' },
+  applyTag: { fontSize: 11, fontWeight: 600, color: 'var(--brand)' },
   pagination: { display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 16, marginTop: 32 },
   pageBtn: { background: 'var(--card)', border: '1px solid var(--border)', color: 'var(--text-1)', padding: '8px 18px', borderRadius: 8, cursor: 'pointer', fontSize: 13, fontFamily: 'Inter, sans-serif' },
 };

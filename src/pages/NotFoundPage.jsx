@@ -14,7 +14,7 @@ export default function NotFoundPage() {
         <div style={{ fontFamily: 'Syne, sans-serif', fontWeight: 800, fontSize: 80, color: 'rgba(245,158,11,0.2)', letterSpacing: '-4px', marginBottom: 8 }}>404</div>
         <div style={{ fontFamily: 'Syne, sans-serif', fontWeight: 700, fontSize: 24, color: '#f0f0f0', marginBottom: 12 }}>Page not found</div>
         <div style={{ fontSize: 14, color: '#9ca3af', lineHeight: 1.7, marginBottom: 28 }}>The page you're looking for doesn't exist or has been moved.</div>
-        <Link to={home} style={{ background: '#f59e0b', color: '#000', borderRadius: 10, padding: '13px 28px', fontSize: 15, fontWeight: 700, textDecoration: 'none', display: 'inline-block' }}>
+        <Link to={home} style={{ background: 'var(--brand)', color: '#000', borderRadius: 10, padding: '13px 28px', fontSize: 15, fontWeight: 700, textDecoration: 'none', display: 'inline-block' }}>
           Go Home
         </Link>
       </div>

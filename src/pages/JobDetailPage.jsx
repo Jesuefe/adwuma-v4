@@ -183,7 +183,7 @@ export default function JobDetailPage() {
 
   if (!job) return (
     <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--bg)', color: 'var(--text-2)' }}>
-      Job not found. <Link to="/jobs" style={{ color: 'var(--gold)', marginLeft: 8 }}>Browse all jobs</Link>
+      Job not found. <Link to="/jobs" style={{ color: 'var(--brand)', marginLeft: 8 }}>Browse all jobs</Link>
     </div>
   );
 
@@ -197,7 +197,7 @@ export default function JobDetailPage() {
       <div style={styles.header}>
         <div style={styles.headerInner}>
           <Link to="/jobs" style={styles.backBtn}><ArrowLeftIcon size={16} /> All Jobs</Link>
-          <Link to="/" style={styles.logo}>Adwuma</Link>
+          <Link to="/" style={styles.logo}>Ajuma Link</Link>
           <div style={{ width: 80 }} />
         </div>
       </div>
@@ -225,7 +225,7 @@ export default function JobDetailPage() {
                     <span style={styles.tag}><BriefcaseIcon size={12} /> {job.job_type?.replace('_', ' ')}</span>
                     {job.salary_min && <span style={styles.tag}><DollarIcon size={12} /> {formatMoney(job.salary_min, job.salary_currency, { compact: true })}–{formatMoney(job.salary_max, job.salary_currency, { compact: true })}/{job.salary_period}</span>}
                     {job.deadline && <span style={styles.tag}><ClockIcon size={12} /> Closes {format(new Date(job.deadline), 'MMM d, yyyy')}</span>}
-                    <span style={{ ...styles.tag, color: 'var(--gold)', borderColor: 'var(--gold-border)' }}>⏱ {job.delivery_days || 30}-day delivery</span>
+                    <span style={{ ...styles.tag, color: 'var(--brand)', borderColor: 'var(--gold-border)' }}>⏱ {job.delivery_days || 30}-day delivery</span>
                   </div>
                 </div>
               </div>
@@ -389,7 +389,7 @@ export default function JobDetailPage() {
 
               <div style={styles.trustPoints}>
                 {['KYC-verified agent', 'Escrow-protected payment', `${job.delivery_days || 30}-day delivery guarantee`, '10% refund if deadline missed'].map(t => (
-                  <div key={t} style={styles.trustPoint}><CheckIcon size={11} style={{ color: 'var(--gold)', flexShrink: 0 }} /> {t}</div>
+                  <div key={t} style={styles.trustPoint}><CheckIcon size={11} style={{ color: 'var(--brand)', flexShrink: 0 }} /> {t}</div>
                 ))}
               </div>
             </div>
@@ -405,7 +405,7 @@ const styles = {
   header: { position: 'sticky', top: 0, zIndex: 50, background: 'rgba(5,8,15,0.92)', backdropFilter: 'blur(12px)', borderBottom: '1px solid var(--border)' },
   headerInner: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 16px', height: 56, maxWidth: 1200, margin: '0 auto' },
   backBtn: { display: 'flex', alignItems: 'center', gap: 5, fontSize: 13, color: 'var(--text-2)', textDecoration: 'none' },
-  logo: { fontFamily: 'Syne, sans-serif', fontWeight: 800, fontSize: 20, color: 'var(--gold)', textDecoration: 'none' },
+  logo: { fontFamily: 'Syne, sans-serif', fontWeight: 800, fontSize: 20, color: 'var(--brand)', textDecoration: 'none' },
   body: { maxWidth: 1200, margin: '0 auto', padding: '0 0 48px' },
   coverWrap: { width: '100%', height: 280, overflow: 'hidden' },
   coverImg: { width: '100%', height: '100%', objectFit: 'cover' },
@@ -426,7 +426,7 @@ const styles = {
   applyCard: { background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 14, padding: 20, display: 'flex', flexDirection: 'column', gap: 14, position: 'sticky', top: 70 },
   feeAmount: { fontFamily: 'Syne, sans-serif', fontWeight: 800, fontSize: 32, color: 'var(--gold-text)', letterSpacing: '-0.5px' },
   escrowNote: { display: 'flex', alignItems: 'flex-start', gap: 8, fontSize: 12, color: 'var(--text-2)', background: 'var(--gold-dim)', padding: '8px 12px', borderRadius: 8, lineHeight: 1.5 },
-  applyBtn: { display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, background: 'var(--gold)', color: '#000', border: 'none', borderRadius: 10, padding: '14px 20px', fontSize: 15, fontWeight: 700, cursor: 'pointer', fontFamily: 'Inter, sans-serif', width: '100%', minHeight: 48, textDecoration: 'none' },
+  applyBtn: { display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, background: 'var(--brand)', color: '#000', border: 'none', borderRadius: 10, padding: '14px 20px', fontSize: 15, fontWeight: 700, cursor: 'pointer', fontFamily: 'Inter, sans-serif', width: '100%', minHeight: 48, textDecoration: 'none' },
   cancelBtn: { background: 'none', border: '1px solid var(--border)', color: 'var(--text-2)', borderRadius: 10, padding: '10px 20px', fontSize: 14, cursor: 'pointer', fontFamily: 'Inter, sans-serif', width: '100%' },
   appliedBox: { background: 'rgba(34,197,94,0.08)', border: '1px solid rgba(34,197,94,0.2)', borderRadius: 10, padding: 14, fontSize: 14, color: '#22c55e', display: 'flex', flexDirection: 'column', gap: 4 },
   fieldLabel: { fontSize: 12, fontWeight: 500, color: 'var(--text-2)', display: 'block', marginBottom: 6 },
