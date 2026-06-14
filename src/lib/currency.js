@@ -92,3 +92,28 @@ export function calculateEscrowSplit(amount, platformFeePct = 10) {
 export function calculatePostingFee(serviceFee, postingFeePct = 1) {
   return (serviceFee * postingFeePct) / 100;
 }
+
+// ── Currency conversion for Paystack (test mode only supports NGN) ──────────
+// Approximate rates — update when going live with multi-currency support
+const RATES_TO_NGN = {
+  NGN: 1,
+  GHS: 90,    // 1 GHS ≈ 90 NGN
+  USD: 1600,  // 1 USD ≈ 1600 NGN
+  GBP: 2000,  // 1 GBP ≈ 2000 NGN
+  EUR: 1750,  // 1 EUR ≈ 1750 NGN
+  CAD: 1200,
+  AED: 435,
+  AUD: 1050,
+};
+
+export function toNGN(amount, fromCurrency) {
+  if (!fromCurrency || fromCurrency === 'NGN') return amount;
+  const rate = RATES_TO_NGN[fromCurrency] || 1;
+  return Math.round(amount * rate);
+}
+
+export function getConversionNote(amount, currency) {
+  if (currency === 'NGN') return null;
+  const converted = toNGN(amount, currency);
+  return \`Charged as ₦\${converted.toLocaleString()} (converted from \${currency} for payment processing)\`;
+}

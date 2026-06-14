@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../context/AuthContext';
-import { formatMoney } from '../lib/currency';
+import { formatMoney, toNGN, getConversionNote } from '../lib/currency';
 import { openPaystackPopup, generatePaystackRef } from '../lib/paystack';
 import { toast } from 'react-toastify';
 import { format, addDays } from 'date-fns';
@@ -124,10 +124,14 @@ export default function JobDetailPage() {
       const { data: { user: authUser } } = await supabase.auth.getUser();
       const ref = generatePaystackRef();
 
+      // Convert to NGN for Paystack (test mode + GHS support pending)
+      const ngnAmount = toNGN(job.service_fee, job.service_fee_currency);
+      const conversionNote = getConversionNote(job.service_fee, job.service_fee_currency);
+
       await openPaystackPopup({
         email: authUser.email,
-        amount: job.service_fee,
-        currency: 'NGN', // Force NGN for test mode
+        amount: ngnAmount,
+        currency: 'NGN', // Always NGN until multi-currency Paystack is enabled
         reference: ref,
         metadata: { application_id: app.id, agent_id: job.agent_id, job_title: job.title },
 
@@ -318,6 +322,11 @@ export default function JobDetailPage() {
                 <LockIcon size={13} style={{ flexShrink: 0 }} />
                 Held in escrow — released only after documents delivered within {job.delivery_days || 30} days
               </div>
+              {job.service_fee_currency !== 'NGN' && (
+                <div style={{ fontSize: 11, color: 'var(--text-3)', background: 'var(--bg-2)', padding: '6px 10px', borderRadius: 8, lineHeight: 1.5 }}>
+                  💱 {getConversionNote(job.service_fee, job.service_fee_currency)}
+                </div>
+              )}
 
               {hasApplied ? (
                 <div style={styles.appliedBox}>

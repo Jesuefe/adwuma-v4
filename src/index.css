@@ -278,6 +278,9 @@ body {
   overflow-y: auto;
   z-index: 40;
   padding: 16px 0;
+  /* HIDDEN on mobile */
+  display: none;
+  flex-direction: column;
 }
 
 .main-content {
@@ -285,7 +288,15 @@ body {
   min-height: 100vh;
 }
 
+/* Mobile — sidebar hidden, bottom nav shown, add padding for bottom nav */
+@media (max-width: 767px) {
+  .sidebar { display: none !important; }
+  .main-content { margin-left: 0 !important; padding-bottom: 76px; }
+}
+
+/* Desktop — sidebar shown, bottom nav hidden */
 @media (min-width: 768px) {
+  .sidebar { display: flex !important; }
   .main-content { margin-left: 240px; }
   .bottom-nav { display: none !important; }
 }
