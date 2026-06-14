@@ -158,12 +158,14 @@ export default function JobsQueuePage() {
     mutationFn: async (job) => {
       // Approve job
       await supabase.from('jobs').update({ status: 'active', reviewed_at: new Date().toISOString(), posting_fee_charged: true }).eq('id', job.id);
-      // Deduct posting fee from agent wallet
+      // Deduct 1% posting fee from agent NGN wallet
       const postingFee = calculatePostingFee(job.service_fee, 1);
-      const { data: wallet } = await supabase.from('agent_wallets').select('balance').eq('agent_id', job.agent_id).eq('currency', job.service_fee_currency).single();
-      const newBalance = (wallet?.balance || 0) - postingFee;
-      await supabase.from('agent_wallets').upsert({ agent_id: job.agent_id, currency: job.service_fee_currency, balance: newBalance });
-      await supabase.from('wallet_transactions').insert({ agent_id: job.agent_id, currency: job.service_fee_currency, type: 'debit', amount: postingFee, description: `Posting fee — ${job.title}`, reference_id: job.id, balance_after: newBalance });
+      const { data: wallet } = await supabase.from('agent_wallets').select('id, balance').eq('agent_id', job.agent_id).eq('currency', 'NGN').single();
+      if (wallet) {
+        const newBalance = (Number(wallet.balance) || 0) - postingFee;
+        await supabase.from('agent_wallets').update({ balance: newBalance }).eq('id', wallet.id);
+        await supabase.from('wallet_transactions').insert({ agent_id: job.agent_id, currency: 'NGN', type: 'posting_fee', amount: postingFee, description: `1% posting fee — ${job.title}`, reference_id: job.id, balance_after: newBalance });
+      }
       // Notify agent
       await supabase.from('notifications').insert({ recipient_id: job.agent_id, type: 'job_approved', title: 'Job Approved!', body: `"${job.title}" is now live. Posting fee of ${formatMoney(postingFee, job.service_fee_currency)} has been deducted.`, link: '/agent/jobs' });
     },

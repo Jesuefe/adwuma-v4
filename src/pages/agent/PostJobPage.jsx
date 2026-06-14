@@ -65,13 +65,17 @@ export default function PostJobPage() {
     job_type: 'full_time', salary_min: '', salary_max: '',
     salary_currency: 'USD', salary_period: 'monthly',
     description: '', requirements: '',
-    service_fee: '', service_fee_currency: 'NGN', deadline: '',
+    service_fee: '', service_fee_currency: 'GHS', deadline: '',
     delivery_days: '30',
   });
   const [checklist, setChecklist] = useState([]);
   const [newCheckItem, setNewCheckItem] = useState('');
   const [newSeekerDoc, setNewSeekerDoc] = useState('');
-  const [seekerDocs, setSeekerDocs] = useState([]);
+  const [seekerDocs, setSeekerDocs] = useState([
+    { label: 'International Passport', required: true },
+    { label: 'Birth Certificate', required: false },
+    { label: 'Educational Certificates', required: false },
+  ]);
   const [companyLogoFile, setCompanyLogoFile] = useState(null);
   const [logoPreview, setLogoPreview] = useState('');
   const [coverImageFile, setCoverImageFile] = useState(null);

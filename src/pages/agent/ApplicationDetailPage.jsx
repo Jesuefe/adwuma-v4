@@ -56,7 +56,7 @@ export default function AgentApplicationDetailPage() {
         jobs(title, company_name, service_fee, service_fee_currency, delivery_days,
           job_document_checklist(id, document_name, is_seeker_doc, required_from_seeker)
         ),
-        profiles!applications_seeker_id_fkey(first_name, last_name, phone),
+        profiles!applications_seeker_id_fkey(first_name, last_name, phone, dob, passport_number, nationality),
         application_steps(*), payments(*),
         application_documents(*), agent_notes(*)`)
       .eq('id', applicationId).single();
