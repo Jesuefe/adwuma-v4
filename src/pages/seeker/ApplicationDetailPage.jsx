@@ -85,15 +85,7 @@ export default function ApplicationDetailPage() {
           .in('step_number', [1, 2]);
         // Reload after fix
         const { data: fresh } = await supabase.from('applications')
-          .select(\`*,
-            jobs(title, company_name, service_fee, service_fee_currency, delivery_days,
-              countries(name, code),
-              job_document_checklist(id, document_name, is_seeker_doc, required_from_seeker, sort_order)
-            ),
-            application_steps(step_number, step_name, status, updated_at),
-            profiles!applications_agent_id_fkey(first_name, last_name),
-            payments(amount, currency, escrow_status),
-            application_documents(id, document_name, file_url, status, uploaded_at, rejection_reason)\`)
+          .select('*, jobs(title, company_name, service_fee, service_fee_currency, delivery_days, countries(name, code), job_document_checklist(id, document_name, is_seeker_doc, required_from_seeker, sort_order)), application_steps(step_number, step_name, status, updated_at), profiles!applications_agent_id_fkey(first_name, last_name), payments(amount, currency, escrow_status), application_documents(id, document_name, file_url, status, uploaded_at, rejection_reason)')
           .eq('id', applicationId).single();
         setApp(fresh);
         setAgentDocs((fresh?.application_documents || []).filter(d => d.status === 'approved'));
