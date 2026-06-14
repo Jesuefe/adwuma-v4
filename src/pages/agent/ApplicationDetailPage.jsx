@@ -179,7 +179,7 @@ export default function AgentApplicationDetailPage() {
           {app.delivery_deadline && (
             <div style={{ background: deadlineMissed ? 'rgba(239,68,68,0.1)' : 'rgba(245,158,11,0.08)', border: `1px solid ${deadlineMissed ? 'rgba(239,68,68,0.3)' : 'rgba(245,158,11,0.3)'}`, borderRadius: 8, padding: '8px 12px', marginBottom: 10 }}>
               <div style={{ fontSize: 12, fontWeight: 600, color: deadlineMissed ? 'var(--error)' : 'var(--gold-text)' }}>
-                ⏱ Delivery Deadline: {format(new Date(app.delivery_deadline), 'MMM d, yyyy')}
+                 Delivery Deadline: {format(new Date(app.delivery_deadline), 'MMM d, yyyy')}
                 {' · '}
                 {deadlineMissed
                   ? <span style={{ color: 'var(--error)' }}>OVERDUE — penalty applied</span>

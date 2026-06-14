@@ -191,7 +191,7 @@ export default function JobDetailPage() {
     </div>
   );
 
-  const flag = COUNTRY_FLAGS[job.countries?.code] || '🌍';
+  const flag = COUNTRY_FLAGS[job.countries?.code] || '';
   const agentDocs = (job.job_document_checklist || []).filter(d => !d.is_seeker_doc).sort((a, b) => a.sort_order - b.sort_order);
   const seekerDocs = (job.job_document_checklist || []).filter(d => d.is_seeker_doc).sort((a, b) => a.sort_order - b.sort_order);
   const requiredSeekerDocs = seekerDocs.filter(d => d.required_from_seeker);
@@ -229,7 +229,7 @@ export default function JobDetailPage() {
                     <span style={styles.tag}><BriefcaseIcon size={12} /> {job.job_type?.replace('_', ' ')}</span>
                     {job.salary_min && <span style={styles.tag}><DollarIcon size={12} /> {formatMoney(job.salary_min, job.salary_currency, { compact: true })}–{formatMoney(job.salary_max, job.salary_currency, { compact: true })}/{job.salary_period}</span>}
                     {job.deadline && <span style={styles.tag}><ClockIcon size={12} /> Closes {format(new Date(job.deadline), 'MMM d, yyyy')}</span>}
-                    <span style={{ ...styles.tag, color: 'var(--brand)', borderColor: 'var(--gold-border)' }}>⏱ {job.delivery_days || 30}-day delivery</span>
+                    <span style={{ ...styles.tag, color: 'var(--brand)', borderColor: 'var(--gold-border)' }}> {job.delivery_days || 30}-day delivery</span>
                   </div>
                 </div>
               </div>
@@ -266,7 +266,7 @@ export default function JobDetailPage() {
             {/* What seeker must provide */}
             {seekerDocs.length > 0 && (
               <div className="card" style={{ marginBottom: 16, borderColor: 'var(--gold-border)' }}>
-                <div style={styles.sectionTitle}>📋 Documents You Must Provide</div>
+                <div style={styles.sectionTitle}> Documents You Must Provide</div>
                 <div style={{ fontSize: 13, color: 'var(--text-2)', marginBottom: 12, lineHeight: 1.6 }}>
                   You will be required to upload these documents after payment. Make sure you have them ready before applying.
                 </div>
@@ -286,7 +286,7 @@ export default function JobDetailPage() {
 
             {/* Delivery timeline info */}
             <div className="card" style={{ marginBottom: 16, background: 'rgba(245,158,11,0.03)' }}>
-              <div style={styles.sectionTitle}>⏱ Delivery Timeline</div>
+              <div style={styles.sectionTitle}> Delivery Timeline</div>
               <div style={{ fontSize: 13, color: 'var(--text-2)', lineHeight: 1.7 }}>
                 This agent commits to completing your placement within <strong style={{ color: 'var(--gold-text)' }}>{job.delivery_days || 30} days</strong> of payment.
                 <br />If they miss this deadline, you automatically receive a <strong style={{ color: '#22c55e' }}>10% refund</strong> ({formatMoney((job.service_fee * 0.1), job.service_fee_currency)}) deducted from the agent's wallet.
@@ -324,7 +324,7 @@ export default function JobDetailPage() {
               </div>
               {job.service_fee_currency !== 'NGN' && (
                 <div style={{ fontSize: 11, color: 'var(--text-3)', background: 'var(--bg-2)', padding: '6px 10px', borderRadius: 8, lineHeight: 1.5 }}>
-                  💱 {getConversionNote(job.service_fee, job.service_fee_currency)}
+                   {getConversionNote(job.service_fee, job.service_fee_currency)}
                 </div>
               )}
 
@@ -354,7 +354,7 @@ export default function JobDetailPage() {
                       <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-1)', marginBottom: 4 }}>Documents you'll need to upload:</div>
                       {seekerDocs.map(d => (
                         <div key={d.id} style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13 }}>
-                          <span style={{ fontSize: 14 }}>{d.required_from_seeker ? '🔴' : '🟡'}</span>
+                          <span style={{ fontSize: 14 }}>{d.required_from_seeker ? '●' : '●'}</span>
                           <span style={{ color: 'var(--text-1)' }}>{d.document_name}</span>
                           <span style={{ fontSize: 10, color: d.required_from_seeker ? 'var(--error)' : 'var(--text-3)' }}>{d.required_from_seeker ? '(required)' : '(optional)'}</span>
                         </div>
@@ -363,7 +363,7 @@ export default function JobDetailPage() {
                   )}
 
                   <div style={{ background: 'rgba(245,158,11,0.06)', border: '1px solid var(--gold-border)', borderRadius: 8, padding: 12, fontSize: 13, color: 'var(--text-2)', lineHeight: 1.6 }}>
-                    ⏱ Agent commits to deliver within <strong style={{ color: 'var(--gold-text)' }}>{job.delivery_days || 30} days</strong> of payment. If missed, you receive a 10% refund automatically.
+                     Agent commits to deliver within <strong style={{ color: 'var(--gold-text)' }}>{job.delivery_days || 30} days</strong> of payment. If missed, you receive a 10% refund automatically.
                   </div>
 
                   <label style={{ display: 'flex', alignItems: 'flex-start', gap: 10, cursor: 'pointer', fontSize: 13, color: 'var(--text-2)', lineHeight: 1.5 }}>

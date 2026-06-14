@@ -100,7 +100,7 @@ export default function AgentJobsPage() {
           <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
             {jobs.map(job => {
               const st = STATUS_STYLES[job.status] || STATUS_STYLES.pending;
-              const flag = COUNTRY_FLAGS[job.countries?.code] || '🌍';
+              const flag = COUNTRY_FLAGS[job.countries?.code] || '';
               return (
                 <div key={job.id} style={styles.jobCard}>
                   <div style={styles.jobCardTop}>

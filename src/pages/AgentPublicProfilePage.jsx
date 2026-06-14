@@ -106,7 +106,7 @@ export default function AgentPublicProfilePage() {
         ) : (
           <div style={styles.jobsGrid}>
             {jobs.map(job => {
-              const flag = COUNTRY_FLAGS[job.countries?.code] || '🌍';
+              const flag = COUNTRY_FLAGS[job.countries?.code] || '';
               return (
                 <Link key={job.id} to={isAuthenticated ? `/jobs/${job.id}` : '/auth/register'} style={styles.jobCard}>
                   <div style={styles.jobCardTop}>

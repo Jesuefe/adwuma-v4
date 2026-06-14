@@ -72,6 +72,39 @@ export default function ApplicationDetailPage() {
       .eq('id', applicationId).single();
 
     if (!data) return;
+    
+    // Auto-complete steps 1 & 2 if payment exists and steps are still pending
+    const hasPayment = (data.payments || []).length > 0;
+    if (hasPayment && (data.application_steps || []).length > 0) {
+      const pendingEarlySteps = (data.application_steps || [])
+        .filter(s => s.step_number <= 2 && s.status === 'pending');
+      if (pendingEarlySteps.length > 0) {
+        await supabase.from('application_steps')
+          .update({ status: 'completed', updated_at: new Date().toISOString() })
+          .eq('application_id', applicationId)
+          .in('step_number', [1, 2]);
+        // Reload after fix
+        const { data: fresh } = await supabase.from('applications')
+          .select(\`*,
+            jobs(title, company_name, service_fee, service_fee_currency, delivery_days,
+              countries(name, code),
+              job_document_checklist(id, document_name, is_seeker_doc, required_from_seeker, sort_order)
+            ),
+            application_steps(step_number, step_name, status, updated_at),
+            profiles!applications_agent_id_fkey(first_name, last_name),
+            payments(amount, currency, escrow_status),
+            application_documents(id, document_name, file_url, status, uploaded_at, rejection_reason)\`)
+          .eq('id', applicationId).single();
+        setApp(fresh);
+        setAgentDocs((fresh?.application_documents || []).filter(d => d.status === 'approved'));
+        const { data: sdocs2 } = await supabase.from('seeker_documents').select('*').eq('application_id', applicationId);
+        setSeekerDocs(sdocs2 || []);
+        const { data: t2 } = await supabase.from('message_threads').select('*').eq('application_id', applicationId).maybeSingle();
+        if (t2) setThread(t2);
+        return;
+      }
+    }
+    
     setApp(data);
     setAgentDocs((data.application_documents || []).filter(d => d.status === 'approved'));
 
@@ -176,7 +209,7 @@ export default function ApplicationDetailPage() {
           {app.delivery_deadline && app.status !== 'approved' && (
             <div style={{ background: deadlineMissed ? 'rgba(239,68,68,0.1)' : 'rgba(245,158,11,0.08)', border: `1px solid ${deadlineMissed ? 'rgba(239,68,68,0.3)' : 'rgba(245,158,11,0.3)'}`, borderRadius: 8, padding: '10px 12px', marginTop: 12 }}>
               <div style={{ fontSize: 12, fontWeight: 600, color: deadlineMissed ? 'var(--error)' : 'var(--gold-text)', marginBottom: 3 }}>
-                ⏱ Delivery Deadline
+                 Delivery Deadline
               </div>
               <div style={{ fontSize: 13, color: 'var(--text-1)' }}>
                 {format(new Date(app.delivery_deadline), 'MMMM d, yyyy')}
@@ -195,7 +228,7 @@ export default function ApplicationDetailPage() {
                 <div style={styles.payAmount}>{formatMoney(payment.amount, payment.currency)}</div>
               </div>
               <div style={{ ...styles.escrowBadge, background: payment.escrow_status === 'holding' ? 'rgba(96,165,250,0.1)' : 'rgba(34,197,94,0.1)', color: payment.escrow_status === 'holding' ? '#60a5fa' : '#22c55e' }}>
-                {payment.escrow_status === 'holding' ? '🔒 In Escrow' : '✓ Released'}
+                {payment.escrow_status === 'holding' ? ' In Escrow' : '✓ Released'}
               </div>
             </div>
           )}
@@ -334,7 +367,7 @@ export default function ApplicationDetailPage() {
         {tab === 'chat' && (
           <div style={styles.chatWrap}>
             <div style={styles.safetyBanner}>
-              🔒 Contact details and external links are blocked for your safety.
+               Contact details and external links are blocked for your safety.
             </div>
             <div style={styles.messages}>
               {messages.length === 0 ? (

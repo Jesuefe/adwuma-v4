@@ -10,7 +10,7 @@ const COUNTRY_FLAGS = { DE:'🇩🇪',GB:'🇬🇧',CA:'🇨🇦',AE:'🇦🇪',
 
 function JobCard({ job, onClickLocked, isLoggedIn }) {
   const country = job.countries;
-  const flag = COUNTRY_FLAGS[country?.code] || '🌍';
+  const flag = COUNTRY_FLAGS[country?.code] || '';
 
   if (isLoggedIn) {
     return (
@@ -218,10 +218,10 @@ export default function HomePage() {
         {/* Trust section */}
         <div style={styles.trust}>
           {[
-            { icon: '🛡️', title: 'KYC-verified agents', desc: 'Every recruitment agent is manually verified before posting jobs.' },
-            { icon: '🔒', title: 'Escrow-protected payments', desc: 'Your service fee is held securely until your agent delivers.' },
-            { icon: '📄', title: 'Document gatekeeping', desc: 'All documents are admin-reviewed before they reach you.' },
-            { icon: '📍', title: 'Live 6-step tracker', desc: 'See exactly where your application is at all times.' },
+            { icon: '', title: 'KYC-verified agents', desc: 'Every recruitment agent is manually verified before posting jobs.' },
+            { icon: '', title: 'Escrow-protected payments', desc: 'Your service fee is held securely until your agent delivers.' },
+            { icon: '', title: 'Document gatekeeping', desc: 'All documents are admin-reviewed before they reach you.' },
+            { icon: '', title: 'Live 6-step tracker', desc: 'See exactly where your application is at all times.' },
           ].map(t => (
             <div key={t.title} style={styles.trustCard}>
               <div style={{ fontSize: 28 }}>{t.icon}</div>

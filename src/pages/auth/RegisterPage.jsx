@@ -4,7 +4,7 @@ import { signUp } from '../../lib/supabase';
 import { getRoleDashboard } from '../../components/shared/RouteGuards';
 
 const ROLES = [
-  { id: 'seeker', label: 'Job Seeker', desc: 'Browse & apply for international jobs', icon: '🌍' },
+  { id: 'seeker', label: 'Job Seeker', desc: 'Browse & apply for international jobs', icon: '' },
   { id: 'agent', label: 'Recruitment Agent', desc: 'Post jobs and place candidates abroad', icon: '🏢' },
 ];
 
@@ -255,7 +255,7 @@ export default function RegisterPage() {
 
                 {role === 'agent' && (
                   <div className="reg-notice">
-                    🔒 <strong>KYC required</strong> — After registering you'll submit your identity and recruitment licence documents. Your account is locked until admin approves your KYC.
+                     <strong>KYC required</strong> — After registering you'll submit your identity and recruitment licence documents. Your account is locked until admin approves your KYC.
                   </div>
                 )}
 

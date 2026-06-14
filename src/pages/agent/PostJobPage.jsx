@@ -363,7 +363,7 @@ export default function PostJobPage() {
               </select>
             </div>
             <div style={{ fontSize: 12, color: 'var(--text-3)', marginTop: 10, background: 'var(--gold-dim)', padding: '8px 12px', borderRadius: 6, border: '1px solid var(--gold-border)' }}>
-              ⚠️ This is a binding commitment. If you do not complete the placement within {form.delivery_days} days of payment, 10% of the service fee is automatically refunded to the seeker from your wallet.
+               This is a binding commitment. If you do not complete the placement within {form.delivery_days} days of payment, 10% of the service fee is automatically refunded to the seeker from your wallet.
             </div>
           </div>
 
@@ -381,7 +381,7 @@ export default function PostJobPage() {
               <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                 {seekerDocs.map((item, i) => (
                   <div key={i} style={{ ...styles.checkItem, justifyContent: 'space-between' }}>
-                    <span style={{ fontSize: 13, color: 'var(--text-1)', flex: 1 }}>📄 {item.label}</span>
+                    <span style={{ fontSize: 13, color: 'var(--text-1)', flex: 1 }}> {item.label}</span>
                     <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: 'var(--text-2)', cursor: 'pointer', flexShrink: 0 }}>
                       <input type="checkbox" checked={item.required} onChange={() => setSeekerDocs(d => d.map((x, idx) => idx === i ? { ...x, required: !x.required } : x))} />
                       Required

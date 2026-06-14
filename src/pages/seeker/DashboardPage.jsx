@@ -134,7 +134,7 @@ export default function SeekerDashboard() {
                 <Link key={job.id} to={`/jobs/${job.id}`} style={styles.featuredJobRow}>
                   {job.company_logo_url
                     ? <img src={job.company_logo_url} alt={job.company_name} style={styles.jobLogo} />
-                    : <div style={styles.jobLogoPlaceholder}>{job.countries?.code || '🌍'}</div>}
+                    : <div style={styles.jobLogoPlaceholder}>{job.countries?.code || ''}</div>}
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={styles.featJobTitle}>{job.title}</div>
                     <div style={styles.featJobMeta}>{job.company_name} · {job.countries?.name}</div>

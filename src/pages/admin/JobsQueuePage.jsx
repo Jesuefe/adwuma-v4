@@ -28,7 +28,7 @@ function RejectModal({ job, onClose, onConfirm }) {
 
 function JobCard({ job, onApprove, onReject, onToggleFeature }) {
   const [expanded, setExpanded] = useState(false);
-  const flag = COUNTRY_FLAGS[job.countries?.code] || '🌍';
+  const flag = COUNTRY_FLAGS[job.countries?.code] || '';
   const postingFee = calculatePostingFee(job.service_fee, 1);
 
   const STATUS_STYLES = {

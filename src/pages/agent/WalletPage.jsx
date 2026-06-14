@@ -79,7 +79,7 @@ export default function WalletPage() {
       await supabase.from('notifications').insert({
         recipient_id: (await supabase.from('profiles').select('id').eq('role', 'admin').limit(1).maybeSingle()).data?.id,
         type: 'withdrawal_requested',
-        title: '💳 Withdrawal Request',
+        title: ' Withdrawal Request',
         body: `Agent requested a withdrawal of ${formatMoney(Number(data.amount), 'NGN')} to ${data.bank_name} — ${data.account_number}`,
         link: '/admin/withdrawals',
       });
@@ -98,11 +98,11 @@ export default function WalletPage() {
   const isNegative = balance < 0;
 
   const TX_COLORS = {
-    escrow_release: { color: 'var(--green)', label: 'Escrow Released', icon: '💰' },
-    posting_fee: { color: 'var(--error)', label: 'Posting Fee', icon: '📋' },
-    withdrawal: { color: 'var(--error)', label: 'Withdrawal', icon: '🏦' },
-    penalty: { color: 'var(--error)', label: 'Late Penalty', icon: '⚠️' },
-    refund: { color: 'var(--error)', label: 'Refund', icon: '↩️' },
+    escrow_release: { color: 'var(--green)', label: 'Escrow Released', icon: '' },
+    posting_fee: { color: 'var(--error)', label: 'Posting Fee', icon: '' },
+    withdrawal: { color: 'var(--error)', label: 'Withdrawal', icon: '' },
+    penalty: { color: 'var(--error)', label: 'Late Penalty', icon: '' },
+    refund: { color: 'var(--error)', label: 'Refund', icon: '' },
   };
 
   const WITHDRAWAL_STATUS = {
@@ -129,7 +129,7 @@ export default function WalletPage() {
 
           {/* Pending in escrow */}
           <div style={{ background: 'var(--green-dim)', border: '1px solid var(--green-border)', borderRadius: 'var(--radius-card)', padding: 20 }}>
-            <div style={{ fontSize: 12, color: 'var(--text-3)', marginBottom: 8, fontWeight: 500 }}>🔒 Pending in Escrow</div>
+            <div style={{ fontSize: 12, color: 'var(--text-3)', marginBottom: 8, fontWeight: 500 }}> Pending in Escrow</div>
             <div style={{ fontWeight: 800, fontSize: 26, color: 'var(--green)', fontVariantNumeric: 'tabular-nums', letterSpacing: '-0.5px' }}>
               {formatMoney(pendingTotal, 'NGN')}
             </div>
@@ -140,7 +140,7 @@ export default function WalletPage() {
         {/* Pending escrow details */}
         {pendingPayments.length > 0 && (
           <div className="card" style={{ marginBottom: 20 }}>
-            <div style={styles.sectionTitle}>🔒 Escrow Holdings</div>
+            <div style={styles.sectionTitle}> Escrow Holdings</div>
             <div style={{ fontSize: 13, color: 'var(--text-2)', marginBottom: 14 }}>These payments are held in escrow. Admin releases them after verifying your work.</div>
             {pendingPayments.map(p => (
               <div key={p.id} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '12px 0', borderBottom: '1px solid var(--border)' }}>

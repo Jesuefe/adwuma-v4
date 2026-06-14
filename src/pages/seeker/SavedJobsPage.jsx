@@ -52,7 +52,7 @@ export default function SavedJobsPage() {
             {savedJobs.map(s => {
               const job = s.jobs;
               if (!job) return null;
-              const flag = COUNTRY_FLAGS[job.countries?.code] || '🌍';
+              const flag = COUNTRY_FLAGS[job.countries?.code] || '';
               return (
                 <div key={s.id} style={styles.savedCard}>
                   {job.cover_image_url && (
