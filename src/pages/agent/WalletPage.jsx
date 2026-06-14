@@ -63,10 +63,26 @@ export default function WalletPage() {
     mutationFn: async (data) => {
       if (Number(data.amount) > (wallet?.balance || 0)) throw new Error('Insufficient balance');
       if (Number(data.amount) < 100) throw new Error('Minimum withdrawal is ₦100');
-      const { error } = await supabase.from('withdrawals').insert({
-        agent_id: user.id, ...data, amount: Number(data.amount), currency: 'NGN', status: 'pending',
-      });
+      const { data: withdrawal, error } = await supabase.from('withdrawals').insert({
+        agent_id: user.id,
+        bank_name: data.bank_name,
+        account_number: data.account_number,
+        account_name: data.account_name,
+        bank_code: data.bank_code || null,
+        amount: Number(data.amount),
+        currency: 'NGN',
+        status: 'pending',
+      }).select().single();
       if (error) throw error;
+
+      // Notify admin
+      await supabase.from('notifications').insert({
+        recipient_id: (await supabase.from('profiles').select('id').eq('role', 'admin').limit(1).maybeSingle()).data?.id,
+        type: 'withdrawal_requested',
+        title: '💳 Withdrawal Request',
+        body: `Agent requested a withdrawal of ${formatMoney(Number(data.amount), 'NGN')} to ${data.bank_name} — ${data.account_number}`,
+        link: '/admin/withdrawals',
+      });
     },
     onSuccess: () => {
       toast.success('Withdrawal request submitted — admin will process within 24 hours');

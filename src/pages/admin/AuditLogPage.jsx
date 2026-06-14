@@ -25,7 +25,7 @@ export default function AuditLogPage() {
     queryKey: ['audit_logs', actionFilter, page],
     queryFn: async () => {
       let q = supabase.from('audit_logs')
-        .select(`*, profiles!audit_logs_actor_id_fkey(first_name, last_name, role)`)
+        .select(`*, profiles(first_name, last_name, role)`)
         .order('created_at', { ascending: false })
         .range(page * PAGE_SIZE, (page + 1) * PAGE_SIZE - 1);
       if (actionFilter) q = q.eq('action', actionFilter);

@@ -88,7 +88,7 @@ export default function AgentApplicationDetailPage() {
     try {
       const url = await upload(file, 'documents', `applications/${applicationId}`);
       await supabase.from('application_documents').insert({ application_id: applicationId, agent_id: user.id, document_name: docName.trim(), file_url: url, status: 'pending' });
-      await supabase.from('notifications').insert({ recipient_id: null, type: 'document_approved', title: 'Document Pending Review', body: `Agent uploaded "${docName}" for review.`, link: '/admin/documents' });
+      await supabase.from('notifications').insert({ recipient_id: (await supabase.from('profiles').select('id').eq('role', 'admin').limit(1).single()).data?.id ||  '00000000-0000-0000-0000-000000000000', type: 'document_approved', title: 'Document Pending Review', body: `Agent uploaded "${docName}" for review.`, link: '/admin/documents' });
       toast.success('Document uploaded — pending admin review');
       setDocName('');
       loadApp();

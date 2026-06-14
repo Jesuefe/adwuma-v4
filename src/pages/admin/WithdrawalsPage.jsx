@@ -111,11 +111,23 @@ export default function WithdrawalsPage() {
     queryKey: ['admin_withdrawals', filter],
     queryFn: async () => {
       let q = supabase.from('withdrawals')
-        .select(`*, profiles!withdrawals_agent_id_fkey(first_name, last_name, email)`)
+        .select('*')
         .order('created_at', { ascending: false });
       if (filter !== 'all') q = q.eq('status', filter);
-      const { data } = await q;
-      return data || [];
+      const { data: withdrawals, error } = await q;
+      if (error) throw error;
+      if (!withdrawals?.length) return [];
+
+      // Fetch agent profiles separately
+      const agentIds = [...new Set(withdrawals.map(w => w.agent_id))];
+      const { data: profiles } = await supabase.from('profiles')
+        .select('id, first_name, last_name, phone')
+        .in('id', agentIds);
+
+      const profileMap = {};
+      (profiles || []).forEach(p => { profileMap[p.id] = p; });
+
+      return withdrawals.map(w => ({ ...w, profiles: profileMap[w.agent_id] || null }));
     },
   });
 

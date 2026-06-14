@@ -1,201 +1,176 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { supabase } from '../lib/supabase';
-import { formatMoney } from '../lib/currency';
-import { useAuth } from '../context/AuthContext';
-import AppShell from '../components/layout/AppShell';
-import { SearchIcon, BriefcaseIcon } from '../components/ui/Icons';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { supabase } from '../../lib/supabase';
+import { useAuth } from '../../context/AuthContext';
+import { useAgentKYC } from 'hooks';
+import { formatMoney } from '../../lib/currency';
+import { format } from 'date-fns';
+import { toast } from 'react-toastify';
+import AppShell from '../../components/layout/AppShell';
+import { PlusIcon, BriefcaseIcon, EditIcon, TrashIcon, AlertCircleIcon, StarIcon } from '../../components/ui/Icons';
 
 const COUNTRY_FLAGS = { DE:'🇩🇪',GB:'🇬🇧',CA:'🇨🇦',AE:'🇦🇪',PL:'🇵🇱',NL:'🇳🇱',US:'🇺🇸',AU:'🇦🇺',BE:'🇧🇪',IE:'🇮🇪',NG:'🇳🇬',GH:'🇬🇭' };
 
-function JobCard({ job }) {
-  const flag = COUNTRY_FLAGS[job.countries?.code] || '🌍';
+const STATUS_STYLES = {
+  pending:  { bg: 'rgba(245,158,11,0.1)',  color: 'var(--brand)',  label: 'Pending Review' },
+  active:   { bg: 'rgba(34,197,94,0.1)',   color: '#22c55e',  label: 'Active' },
+  rejected: { bg: 'rgba(239,68,68,0.08)',  color: '#ef4444',  label: 'Rejected' },
+  expired:  { bg: 'rgba(255,255,255,0.06)',color: '#9ca3af',  label: 'Expired' },
+  closed:   { bg: 'rgba(255,255,255,0.06)',color: '#9ca3af',  label: 'Closed' },
+};
+
+export default function AgentJobsPage() {
+  const { user } = useAuth();
+  const { data: kyc } = useAgentKYC();
+  const queryClient = useQueryClient();
+  const [filter, setFilter] = useState('all');
+
+  const { data: jobs = [], isLoading } = useQuery({
+    queryKey: ['agent_jobs_full', user?.id, filter],
+    queryFn: async () => {
+      let q = supabase.from('jobs')
+        .select(`*, countries(name, code), currencies!jobs_service_fee_currency_fkey(symbol, code),
+          job_document_checklist(id, document_name)`)
+        .eq('agent_id', user.id)
+        .order('created_at', { ascending: false });
+      if (filter !== 'all') q = q.eq('status', filter);
+      const { data } = await q;
+      return data || [];
+    },
+    enabled: !!user,
+  });
+
+  const closeMutation = useMutation({
+    mutationFn: async (jobId) => {
+      await supabase.from('jobs').update({ status: 'closed' }).eq('id', jobId);
+    },
+    onSuccess: () => { toast.success('Job closed'); queryClient.invalidateQueries(['agent_jobs_full']); },
+    onError: (e) => toast.error(e.message),
+  });
+
+  const kycApproved = kyc?.status === 'approved';
+  const FILTERS = ['all', 'pending', 'active', 'rejected', 'closed'];
+
   return (
-    <Link to={`/jobs/${job.id}`} style={styles.jobCard}>
-      {job.cover_image_url && (
-        <div style={styles.jobCover}>
-          <img src={job.cover_image_url} alt="" style={styles.jobCoverImg} />
-        </div>
-      )}
-      {job.is_featured && <div style={styles.featuredBadge}>⭐ Featured</div>}
-      <div style={styles.jobCardBody}>
-        <div style={styles.jobCardTop}>
-          {job.company_logo_url
-            ? <img src={job.company_logo_url} alt={job.company_name} style={styles.companyLogo} />
-            : <span style={{ fontSize: 26 }}>{flag}</span>}
-          <div style={{ flex: 1, minWidth: 0 }}>
-            <div style={styles.jobCountry}>{job.countries?.name} · {job.service_fee_currency}</div>
-            <div style={styles.jobTypeBadge}>{job.job_type?.replace('_', ' ')}</div>
-          </div>
-        </div>
-        <div style={styles.jobTitle}>{job.title}</div>
-        <div style={styles.jobCompany}>{job.company_name}</div>
-        {job.salary_min && (
-          <div style={styles.jobSalary}>
-            {formatMoney(job.salary_min, job.salary_currency, { compact: true })} – {formatMoney(job.salary_max, job.salary_currency, { compact: true })} / {job.salary_period}
+    <AppShell title="My Jobs">
+      <div className="page">
+        {/* KYC warning */}
+        {!kycApproved && (
+          <div style={styles.kycBanner}>
+            <AlertCircleIcon size={16} style={{ color: 'var(--gold)', flexShrink: 0 }} />
+            <div style={{ flex: 1, fontSize: 13, color: 'var(--text-2)' }}>
+              KYC not approved. <Link to="/agent/kyc" style={{ color: 'var(--gold-text)' }}>Complete verification</Link> to post jobs.
+            </div>
           </div>
         )}
-        <div style={styles.jobFooter}>
-          <div style={styles.agentInfo}>
-            <div style={styles.agentAvatar}>{job.profiles?.first_name?.[0]}{job.profiles?.last_name?.[0]}</div>
-            <span style={styles.agentName}>{job.profiles?.first_name} {job.profiles?.last_name}</span>
+
+        {/* Header */}
+        <div style={styles.pageHeader}>
+          <div>
+            <div style={styles.pageTitle}>My Job Listings</div>
+            <div style={styles.pageSub}>{jobs.length} total listing{jobs.length !== 1 ? 's' : ''}</div>
           </div>
-          <div style={styles.applyTag}>View & Apply →</div>
+          {kycApproved && (
+            <Link to="/agent/jobs/new" style={styles.postBtn}>
+              <PlusIcon size={16} /> Post Job
+            </Link>
+          )}
         </div>
-      </div>
-    </Link>
-  );
-}
 
-function JobsContent({ isAuthenticated }) {
-  const [jobs, setJobs] = useState([]);
-  const [total, setTotal] = useState(0);
-  const [loading, setLoading] = useState(true);
-  const [search, setSearch] = useState('');
-  const [countries, setCountries] = useState([]);
-  const [countryFilter, setCountryFilter] = useState('');
-  const [typeFilter, setTypeFilter] = useState('');
-  const [page, setPage] = useState(0);
-  const PAGE_SIZE = 12;
-
-  useEffect(() => {
-    supabase.from('countries').select('*').order('sort_order').then(({ data }) => setCountries(data || []));
-  }, []);
-
-  useEffect(() => { fetchJobs(); }, [page, countryFilter, typeFilter]);
-  useEffect(() => {
-    const t = setTimeout(() => { setPage(0); fetchJobs(); }, 400);
-    return () => clearTimeout(t);
-  }, [search]);
-
-  async function fetchJobs() {
-    setLoading(true);
-    let q = supabase.from('jobs')
-      .select(`*, countries(name, code), currencies!jobs_service_fee_currency_fkey(symbol, code),
-        profiles!jobs_agent_id_fkey(first_name, last_name)`, { count: 'exact' })
-      .eq('status', 'active')
-      .order('is_featured', { ascending: false })
-      .order('created_at', { ascending: false })
-      .range(page * PAGE_SIZE, (page + 1) * PAGE_SIZE - 1);
-    if (search) q = q.or(`title.ilike.%${search}%,company_name.ilike.%${search}%`);
-    if (countryFilter) q = q.eq('destination_country_id', countryFilter);
-    if (typeFilter) q = q.eq('job_type', typeFilter);
-    const { data, count } = await q;
-    setJobs(data || []);
-    setTotal(count || 0);
-    setLoading(false);
-  }
-
-  return (
-    <div style={styles.body}>
-      <div style={styles.searchSection}>
-        <h1 style={styles.pageTitle}>Find Jobs Abroad</h1>
-        <p style={styles.pageSub}>{total} verified international jobs available</p>
-        <div style={styles.searchWrap}>
-          <SearchIcon size={18} style={{ color: 'var(--text-3)', flexShrink: 0 }} />
-          <input style={styles.searchInput} placeholder="Search jobs, companies…" value={search} onChange={e => setSearch(e.target.value)} />
+        {/* Filter tabs */}
+        <div style={styles.filterTabs}>
+          {FILTERS.map(f => (
+            <button key={f} style={{ ...styles.filterTab, ...(filter === f ? styles.filterTabActive : {}) }} onClick={() => setFilter(f)}>
+              {f === 'all' ? 'All' : STATUS_STYLES[f]?.label || f}
+            </button>
+          ))}
         </div>
-        <div style={styles.filters}>
-          <select style={styles.filterSelect} value={countryFilter} onChange={e => { setCountryFilter(e.target.value); setPage(0); }}>
-            <option value="">All Countries</option>
-            {countries.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
-          </select>
-          <select style={styles.filterSelect} value={typeFilter} onChange={e => { setTypeFilter(e.target.value); setPage(0); }}>
-            <option value="">All Types</option>
-            <option value="full_time">Full Time</option>
-            <option value="part_time">Part Time</option>
-            <option value="contract">Contract</option>
-            <option value="internship">Internship</option>
-          </select>
-        </div>
-      </div>
 
-      {loading ? (
-        <div style={styles.loadingWrap}><div className="spinner spinner-lg" /></div>
-      ) : jobs.length === 0 ? (
-        <div className="empty-state">
-          <BriefcaseIcon size={40} style={{ color: 'var(--text-3)' }} />
-          <div className="empty-title">No jobs found</div>
-          <div className="empty-sub">Try adjusting your search or filters</div>
-        </div>
-      ) : (
-        <div style={styles.grid}>
-          {jobs.map(job => <JobCard key={job.id} job={job} />)}
-        </div>
-      )}
-
-      {total > PAGE_SIZE && (
-        <div style={styles.pagination}>
-          <button style={styles.pageBtn} disabled={page === 0} onClick={() => setPage(p => p - 1)}>← Previous</button>
-          <span style={{ fontSize: 13, color: 'var(--text-2)' }}>Page {page + 1} of {Math.ceil(total / PAGE_SIZE)}</span>
-          <button style={styles.pageBtn} disabled={(page + 1) * PAGE_SIZE >= total} onClick={() => setPage(p => p + 1)}>Next →</button>
-        </div>
-      )}
-    </div>
-  );
-}
-
-export default function JobsPage() {
-  const { isAuthenticated } = useAuth();
-
-  if (isAuthenticated) {
-    return (
-      <AppShell title="Browse Jobs">
-        <JobsContent isAuthenticated={true} />
-      </AppShell>
-    );
-  }
-
-  return (
-    <div style={{ minHeight: '100vh', background: 'var(--bg)', fontFamily: "'Inter', sans-serif" }}>
-      {/* Public header */}
-      <div style={styles.header}>
-        <div style={styles.headerInner}>
-          <Link to="/" style={styles.logo}>Ajuma Link</Link>
-          <div style={{ display: 'flex', gap: 8 }}>
-            <Link to="/auth/login" style={styles.loginBtn}>Sign in</Link>
-            <Link to="/auth/register" style={styles.registerBtn}>Get started</Link>
+        {isLoading ? (
+          <div style={{ display: 'flex', justifyContent: 'center', padding: 60 }}><div className="spinner spinner-lg" /></div>
+        ) : jobs.length === 0 ? (
+          <div className="empty-state">
+            <BriefcaseIcon size={40} style={{ color: 'var(--text-3)' }} />
+            <div className="empty-title">{filter === 'all' ? 'No jobs yet' : `No ${STATUS_STYLES[filter]?.label || filter} jobs`}</div>
+            <div className="empty-sub">{kycApproved ? 'Post your first job to start receiving applications' : 'Complete KYC to start posting'}</div>
+            {kycApproved && <Link to="/agent/jobs/new" style={styles.postFirstBtn}><PlusIcon size={15} /> Post your first job</Link>}
           </div>
-        </div>
+        ) : (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+            {jobs.map(job => {
+              const st = STATUS_STYLES[job.status] || STATUS_STYLES.pending;
+              const flag = COUNTRY_FLAGS[job.countries?.code] || '🌍';
+              return (
+                <div key={job.id} style={styles.jobCard}>
+                  <div style={styles.jobCardTop}>
+                    <div style={{ display: 'flex', gap: 12, alignItems: 'flex-start', flex: 1, minWidth: 0 }}>
+                      <span style={{ fontSize: 28, flexShrink: 0 }}>{flag}</span>
+                      <div style={{ minWidth: 0 }}>
+                        <div style={styles.jobTitle}>{job.title}</div>
+                        <div style={styles.jobMeta}>{job.company_name} · {job.countries?.name}</div>
+                        <div style={styles.jobFee}>Service fee: {formatMoney(job.service_fee, job.service_fee_currency)}</div>
+                      </div>
+                    </div>
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 6, flexShrink: 0 }}>
+                      <span style={{ ...styles.badge, background: st.bg, color: st.color }}>{st.label}</span>
+                      {job.is_featured && <span style={styles.featuredBadge}><StarIcon size={10} /> Featured</span>}
+                    </div>
+                  </div>
+
+                  {job.status === 'rejected' && job.rejection_reason && (
+                    <div style={styles.rejectionNote}>
+                      <AlertCircleIcon size={13} style={{ flexShrink: 0 }} /> {job.rejection_reason}
+                    </div>
+                  )}
+
+                  <div style={styles.jobCardMeta}>
+                    <span>{job.job_type?.replace('_', ' ')}</span>
+                    <span>{job.job_document_checklist?.length || 0} docs in checklist</span>
+                    <span>Posted {format(new Date(job.created_at), 'MMM d, yyyy')}</span>
+                    {job.deadline && <span>Closes {format(new Date(job.deadline), 'MMM d')}</span>}
+                  </div>
+
+                  <div style={styles.jobCardActions}>
+                    {job.status === 'active' && (
+                      <button style={styles.closeBtn} onClick={() => { if (window.confirm('Close this job listing?')) closeMutation.mutate(job.id); }}>
+                        <TrashIcon size={13} /> Close
+                      </button>
+                    )}
+                    <Link to={`/agent/jobs/${job.id}/edit`} style={styles.editBtn}>
+                      <EditIcon size={13} /> Edit
+                    </Link>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
       </div>
-      <JobsContent isAuthenticated={false} />
-    </div>
+    </AppShell>
   );
 }
 
 const styles = {
-  header: { position: 'sticky', top: 0, zIndex: 50, background: 'rgba(5,8,15,0.92)', backdropFilter: 'blur(12px)', borderBottom: '1px solid var(--border)' },
-  headerInner: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 16px', height: 56, maxWidth: 1200, margin: '0 auto' },
-  logo: { fontFamily: 'Inter, sans-serif', fontWeight: 800, fontSize: 20, color: 'var(--brand)', textDecoration: 'none' },
-  loginBtn: { fontSize: 13, fontWeight: 500, color: 'var(--text-2)', padding: '7px 14px', borderRadius: 8, textDecoration: 'none', border: '1px solid var(--border)' },
-  registerBtn: { fontSize: 13, fontWeight: 600, color: '#000', background: 'var(--brand)', padding: '7px 14px', borderRadius: 8, textDecoration: 'none' },
-  body: { maxWidth: 1200, margin: '0 auto', padding: '28px 16px 48px' },
-  searchSection: { marginBottom: 28 },
-  pageTitle: { fontFamily: 'Inter, sans-serif', fontWeight: 800, fontSize: 28, color: 'var(--text-1)', marginBottom: 6, letterSpacing: '-0.5px' },
-  pageSub: { fontSize: 14, color: 'var(--text-2)', marginBottom: 16 },
-  searchWrap: { display: 'flex', alignItems: 'center', gap: 10, background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 12, padding: '0 16px', marginBottom: 12, maxWidth: 600 },
-  searchInput: { flex: 1, background: 'none', border: 'none', outline: 'none', fontSize: 15, color: 'var(--text-1)', padding: '14px 0', fontFamily: 'Inter, sans-serif' },
-  filters: { display: 'flex', gap: 8, flexWrap: 'wrap' },
-  filterSelect: { background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 8, padding: '8px 12px', fontSize: 13, color: 'var(--text-1)', cursor: 'pointer', fontFamily: 'Inter, sans-serif', outline: 'none' },
-  loadingWrap: { display: 'flex', justifyContent: 'center', padding: 60 },
-  grid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 16 },
-  jobCard: { background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 14, overflow: 'hidden', textDecoration: 'none', display: 'block', transition: 'border-color 0.15s, transform 0.15s' },
-  jobCover: { width: '100%', height: 120, overflow: 'hidden' },
-  jobCoverImg: { width: '100%', height: '100%', objectFit: 'cover' },
-  jobCardBody: { padding: 16, display: 'flex', flexDirection: 'column', gap: 6 },
-  featuredBadge: { fontSize: 10, fontWeight: 700, color: '#000', background: 'var(--brand)', padding: '3px 10px', display: 'inline-block', margin: '8px 16px 0' },
-  jobCardTop: { display: 'flex', alignItems: 'center', gap: 10 },
-  companyLogo: { width: 36, height: 36, borderRadius: 8, objectFit: 'cover', border: '1px solid var(--border)', flexShrink: 0 },
-  jobCountry: { fontSize: 11, color: 'var(--text-3)', fontWeight: 500, marginBottom: 2 },
-  jobTypeBadge: { fontSize: 10, fontWeight: 600, color: 'var(--text-2)', background: 'rgba(255,255,255,0.05)', padding: '2px 8px', borderRadius: 20, display: 'inline-block', textTransform: 'capitalize' },
-  jobTitle: { fontFamily: 'Inter, sans-serif', fontWeight: 700, fontSize: 15, color: 'var(--text-1)', lineHeight: 1.3 },
-  jobCompany: { fontSize: 13, color: 'var(--text-2)' },
-  jobSalary: { fontSize: 13, fontWeight: 600, color: 'var(--gold-text)' },
-  jobFooter: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: 10, borderTop: '1px solid var(--border)', marginTop: 4 },
-  agentInfo: { display: 'flex', alignItems: 'center', gap: 6 },
-  agentAvatar: { width: 24, height: 24, borderRadius: '50%', background: 'var(--gold-dim)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 9, fontWeight: 700, color: 'var(--gold-text)' },
-  agentName: { fontSize: 11, color: 'var(--text-3)' },
-  applyTag: { fontSize: 11, fontWeight: 600, color: 'var(--brand)' },
-  pagination: { display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 16, marginTop: 32 },
-  pageBtn: { background: 'var(--card)', border: '1px solid var(--border)', color: 'var(--text-1)', padding: '8px 18px', borderRadius: 8, cursor: 'pointer', fontSize: 13, fontFamily: 'Inter, sans-serif' },
+  kycBanner: { display: 'flex', alignItems: 'center', gap: 10, background: 'rgba(245,158,11,0.06)', border: '1px solid var(--gold-border)', borderRadius: 10, padding: '12px 14px', marginBottom: 20 },
+  pageHeader: { display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12, marginBottom: 20 },
+  pageTitle: { fontFamily: 'Inter, sans-serif', fontWeight: 700, fontSize: 22, color: 'var(--text-1)', marginBottom: 4 },
+  pageSub: { fontSize: 13, color: 'var(--text-2)' },
+  postBtn: { display: 'flex', alignItems: 'center', gap: 6, background: 'var(--gold)', color: '#000', fontWeight: 600, fontSize: 13, padding: '9px 16px', borderRadius: 8, textDecoration: 'none', flexShrink: 0 },
+  filterTabs: { display: 'flex', gap: 6, marginBottom: 20, flexWrap: 'wrap' },
+  filterTab: { padding: '7px 14px', borderRadius: 8, border: '1px solid var(--border)', background: 'none', color: 'var(--text-2)', fontSize: 12, fontWeight: 500, cursor: 'pointer', fontFamily: 'Inter, sans-serif' },
+  filterTabActive: { background: 'var(--gold-dim)', borderColor: 'var(--gold-border)', color: 'var(--gold-text)' },
+  jobCard: { background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 12, padding: 16, display: 'flex', flexDirection: 'column', gap: 10 },
+  jobCardTop: { display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 10 },
+  jobTitle: { fontFamily: 'Inter, sans-serif', fontWeight: 700, fontSize: 15, color: 'var(--text-1)', marginBottom: 3 },
+  jobMeta: { fontSize: 12, color: 'var(--text-2)', marginBottom: 3 },
+  jobFee: { fontSize: 12, fontWeight: 600, color: 'var(--gold-text)' },
+  badge: { fontSize: 11, fontWeight: 600, padding: '3px 10px', borderRadius: 20 },
+  featuredBadge: { display: 'flex', alignItems: 'center', gap: 3, fontSize: 10, fontWeight: 600, color: 'var(--gold)', background: 'var(--gold-dim)', padding: '2px 8px', borderRadius: 20 },
+  rejectionNote: { display: 'flex', gap: 8, fontSize: 12, color: 'var(--error)', background: 'var(--error-dim)', padding: '8px 12px', borderRadius: 6, alignItems: 'flex-start' },
+  jobCardMeta: { display: 'flex', flexWrap: 'wrap', gap: 12, fontSize: 11, color: 'var(--text-3)' },
+  jobCardActions: { display: 'flex', gap: 8 },
+  editBtn: { display: 'flex', alignItems: 'center', gap: 5, fontSize: 12, fontWeight: 500, color: 'var(--text-2)', background: 'rgba(255,255,255,0.05)', border: '1px solid var(--border)', borderRadius: 6, padding: '6px 12px', textDecoration: 'none' },
+  closeBtn: { display: 'flex', alignItems: 'center', gap: 5, fontSize: 12, fontWeight: 500, color: 'var(--error)', background: 'var(--error-dim)', border: '1px solid rgba(239,68,68,0.2)', borderRadius: 6, padding: '6px 12px', cursor: 'pointer', fontFamily: 'Inter, sans-serif' },
+  postFirstBtn: { display: 'flex', alignItems: 'center', gap: 6, background: 'var(--gold)', color: '#000', fontWeight: 600, fontSize: 14, padding: '10px 20px', borderRadius: 8, textDecoration: 'none', marginTop: 8 },
 };
