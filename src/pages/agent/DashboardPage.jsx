@@ -12,7 +12,7 @@ function StatCard({ icon: Ico, label, value, color, to }) {
   const inner = (
     <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: 6, textDecoration: 'none' }}>
       <Ico size={18} style={{ color }} />
-      <div style={{ fontSize: 24, fontWeight: 700, fontFamily: 'Syne, sans-serif', color: 'var(--text-1)' }}>{value}</div>
+      <div style={{ fontSize: 24, fontWeight: 700, fontFamily: 'Inter, sans-serif', color: 'var(--text-1)' }}>{value}</div>
       <div style={{ fontSize: 11, color: 'var(--text-3)' }}>{label}</div>
     </div>
   );
@@ -79,7 +79,7 @@ export default function AgentDashboard() {
           <div className="card-gold" style={{ marginBottom: 24, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
             <div>
               <div style={{ fontSize: 12, color: 'var(--text-3)', marginBottom: 4 }}>Available balance</div>
-              <div style={{ fontFamily: 'Syne, sans-serif', fontWeight: 800, fontSize: 28, color: wallet.balance < 0 ? 'var(--error)' : 'var(--gold-text)' }}>
+              <div style={{ fontFamily: 'Inter, sans-serif', fontWeight: 800, fontSize: 28, color: wallet.balance < 0 ? 'var(--error)' : 'var(--gold-text)' }}>
                 {formatMoney(wallet.balance, 'NGN')}
               </div>
               {wallet.balance < 0 && <div style={{ fontSize: 11, color: 'var(--error)', marginTop: 4 }}>Negative balance — will be recovered from next payment</div>}
@@ -155,7 +155,7 @@ const styles = {
   kycBannerSub: { fontSize: 12, color: 'var(--text-2)' },
   kycBannerBtn: { background: 'var(--gold)', color: '#000', fontWeight: 600, fontSize: 13, padding: '7px 14px', borderRadius: 8, textDecoration: 'none', whiteSpace: 'nowrap', flexShrink: 0 },
   greeting: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20, gap: 12 },
-  greetTitle: { fontFamily: 'Syne, sans-serif', fontWeight: 700, fontSize: 22, color: 'var(--text-1)' },
+  greetTitle: { fontFamily: 'Inter, sans-serif', fontWeight: 700, fontSize: 22, color: 'var(--text-1)' },
   greetSub: { fontSize: 13, color: 'var(--text-2)', marginTop: 3 },
   postJobBtn: { display: 'flex', alignItems: 'center', gap: 6, background: 'var(--gold)', color: '#000', fontWeight: 600, fontSize: 13, padding: '8px 14px', borderRadius: 8, textDecoration: 'none', whiteSpace: 'nowrap', flexShrink: 0 },
   seeAll: { fontSize: 13, color: 'var(--gold-text)', textDecoration: 'none' },

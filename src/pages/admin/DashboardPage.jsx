@@ -76,7 +76,7 @@ export default function AdminDashboard() {
                 <Link key={s.label} to={s.to} style={{ textDecoration: 'none' }}>
                   <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
                     <s.icon size={18} style={{ color: s.color }} />
-                    <div style={{ fontSize: 22, fontWeight: 700, fontFamily: 'Syne, sans-serif', color: 'var(--text-1)' }}>{s.value}</div>
+                    <div style={{ fontSize: 22, fontWeight: 700, fontFamily: 'Inter, sans-serif', color: 'var(--text-1)' }}>{s.value}</div>
                     <div style={{ fontSize: 11, color: 'var(--text-3)' }}>{s.label}</div>
                   </div>
                 </Link>
@@ -154,7 +154,7 @@ export default function AdminDashboard() {
 
 const styles = {
   pageHeader: { display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12, marginBottom: 24 },
-  pageTitle: { fontFamily: 'Syne, sans-serif', fontWeight: 700, fontSize: 22, color: 'var(--text-1)' },
+  pageTitle: { fontFamily: 'Inter, sans-serif', fontWeight: 700, fontSize: 22, color: 'var(--text-1)' },
   pageSub: { fontSize: 13, color: 'var(--text-2)', marginTop: 3 },
   alertBadge: { display: 'flex', alignItems: 'center', gap: 6, background: 'rgba(239,68,68,0.1)', color: 'var(--error)', border: '1px solid rgba(239,68,68,0.2)', borderRadius: 20, padding: '6px 12px', fontSize: 12, fontWeight: 600, whiteSpace: 'nowrap' },
   queueCard: { display: 'flex', alignItems: 'center', gap: 12, background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 12, padding: '14px 16px', textDecoration: 'none', transition: 'border-color 0.15s' },

@@ -165,7 +165,7 @@ export default function FraudPage() {
 }
 
 const styles = {
-  pageTitle: { fontFamily: 'Syne, sans-serif', fontWeight: 700, fontSize: 22, color: 'var(--text-1)', marginBottom: 4 },
+  pageTitle: { fontFamily: 'Inter, sans-serif', fontWeight: 700, fontSize: 22, color: 'var(--text-1)', marginBottom: 4 },
   pageSub: { fontSize: 13, color: 'var(--text-2)', marginBottom: 24 },
   tabs: { display: 'flex', gap: 6, marginBottom: 20, flexWrap: 'wrap' },
   tab: { display: 'flex', alignItems: 'center', gap: 6, padding: '8px 14px', borderRadius: 8, border: '1px solid var(--border)', background: 'none', color: 'var(--text-2)', fontSize: 13, fontWeight: 500, cursor: 'pointer', fontFamily: 'Inter, sans-serif' },

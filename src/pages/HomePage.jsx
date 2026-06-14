@@ -246,9 +246,9 @@ export default function HomePage() {
           <div style={styles.footerLinks}>
             <a href="/terms" style={styles.footerLink}>Terms</a>
             <a href="/privacy" style={styles.footerLink}>Privacy</a>
-            <a href="mailto:hello@adwuma.com" style={styles.footerLink}>Contact</a>
+            <a href="mailto:hello@ajumalink.com" style={styles.footerLink}>Contact</a>
           </div>
-          <div style={styles.footerCopy}>© 2025 Adwuma. Built by Viarnex.</div>
+          <div style={styles.footerCopy}>© 2025 Ajuma Link. Built by Viarnex.</div>
         </div>
       </div>
     </>
@@ -259,13 +259,13 @@ const styles = {
   root: { minHeight: '100vh', background: '#05080f', fontFamily: "'Inter', sans-serif" },
   header: { position: 'sticky', top: 0, zIndex: 50, background: 'rgba(5,8,15,0.92)', backdropFilter: 'blur(12px)', borderBottom: '1px solid rgba(255,255,255,0.07)' },
   headerInner: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 16px', height: 56, maxWidth: 1200, margin: '0 auto' },
-  logo: { fontFamily: 'Syne, sans-serif', fontWeight: 800, fontSize: 20, color: 'var(--brand)' },
+  logo: { fontFamily: 'Inter, sans-serif', fontWeight: 800, fontSize: 20, color: 'var(--brand)' },
   headerRight: { display: 'flex', gap: 8 },
   loginBtn: { fontSize: 13, fontWeight: 500, color: '#9ca3af', padding: '7px 14px', borderRadius: 8, textDecoration: 'none', border: '1px solid rgba(255,255,255,0.07)' },
   registerBtn: { fontSize: 13, fontWeight: 600, color: '#000', background: 'var(--brand)', padding: '7px 14px', borderRadius: 8, textDecoration: 'none', border: 'none', cursor: 'pointer', fontFamily: 'Inter, sans-serif' },
   hero: { padding: '48px 16px 40px', textAlign: 'center', maxWidth: 720, margin: '0 auto' },
   heroPill: { display: 'inline-block', fontSize: 11, fontWeight: 600, color: 'var(--brand)', background: 'rgba(245,158,11,0.1)', border: '1px solid rgba(245,158,11,0.25)', borderRadius: 20, padding: '4px 12px', marginBottom: 16, letterSpacing: '0.5px', textTransform: 'uppercase' },
-  heroTitle: { fontFamily: 'Syne, sans-serif', fontWeight: 800, fontSize: 36, lineHeight: 1.15, color: '#f0f0f0', letterSpacing: '-1px', marginBottom: 16 },
+  heroTitle: { fontFamily: 'Inter, sans-serif', fontWeight: 800, fontSize: 36, lineHeight: 1.15, color: '#f0f0f0', letterSpacing: '-1px', marginBottom: 16 },
   heroSub: { fontSize: 15, color: '#9ca3af', lineHeight: 1.7, maxWidth: 480, margin: '0 auto 28px' },
   searchWrap: { display: 'flex', alignItems: 'center', gap: 10, background: '#0d1117', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 12, padding: '0 16px', maxWidth: 560, margin: '0 auto 20px' },
   searchInput: { flex: 1, background: 'none', border: 'none', outline: 'none', fontSize: 15, color: '#f0f0f0', padding: '14px 0', fontFamily: 'Inter, sans-serif' },
@@ -273,7 +273,7 @@ const styles = {
   dot: { width: 3, height: 3, borderRadius: '50%', background: '#4b5563', display: 'inline-block' },
   jobsSection: { maxWidth: 1200, margin: '0 auto', padding: '0 16px 40px' },
   jobsSectionHeader: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 },
-  jobsSectionTitle: { fontFamily: 'Syne, sans-serif', fontWeight: 700, fontSize: 18, color: '#f0f0f0', display: 'flex', alignItems: 'center', gap: 10 },
+  jobsSectionTitle: { fontFamily: 'Inter, sans-serif', fontWeight: 700, fontSize: 18, color: '#f0f0f0', display: 'flex', alignItems: 'center', gap: 10 },
   jobsCount: { fontSize: 12, fontWeight: 500, color: '#4b5563', background: 'rgba(255,255,255,0.05)', padding: '2px 8px', borderRadius: 20 },
   seeAllBtn: { fontSize: 13, color: 'var(--brand)', textDecoration: 'none', fontWeight: 500 },
   jobsGrid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 16 },
@@ -286,12 +286,12 @@ const styles = {
   companyLogo: { width: 36, height: 36, borderRadius: 8, objectFit: 'cover', border: '1px solid rgba(255,255,255,0.07)' },
   jobCountry: { fontSize: 11, color: '#4b5563', fontWeight: 500 },
   jobTypeBadge: { fontSize: 10, fontWeight: 600, color: '#9ca3af', background: 'rgba(255,255,255,0.05)', padding: '3px 8px', borderRadius: 20, textTransform: 'capitalize' },
-  jobTitle: { fontFamily: 'Syne, sans-serif', fontWeight: 700, fontSize: 15, color: '#f0f0f0', lineHeight: 1.3, padding: '0 16px 4px' },
+  jobTitle: { fontFamily: 'Inter, sans-serif', fontWeight: 700, fontSize: 15, color: '#f0f0f0', lineHeight: 1.3, padding: '0 16px 4px' },
   jobCompany: { fontSize: 13, color: '#9ca3af', padding: '0 16px 4px' },
-  jobSalary: { fontSize: 13, fontWeight: 600, color: '#fbbf24', padding: '0 16px 4px' },
+  jobSalary: { fontSize: 13, fontWeight: 600, color: 'var(--brand)', padding: '0 16px 4px' },
   jobFooter: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 16px 14px', borderTop: '1px solid rgba(255,255,255,0.05)', marginTop: 8 },
   jobAgent: { display: 'flex', alignItems: 'center', gap: 6 },
-  agentAvatar: { width: 24, height: 24, borderRadius: '50%', background: 'rgba(245,158,11,0.1)', border: '1px solid rgba(245,158,11,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 9, fontWeight: 700, color: '#fbbf24' },
+  agentAvatar: { width: 24, height: 24, borderRadius: '50%', background: 'rgba(245,158,11,0.1)', border: '1px solid rgba(245,158,11,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 9, fontWeight: 700, color: 'var(--brand)' },
   agentName: { fontSize: 11, color: '#4b5563', maxWidth: 100, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' },
   viewBtn: { display: 'flex', alignItems: 'center', gap: 4, fontSize: 11, fontWeight: 600, color: 'var(--brand)' },
   featuredBadge: { position: 'absolute', top: 8, right: 8, display: 'flex', alignItems: 'center', gap: 3, fontSize: 10, fontWeight: 700, color: 'var(--brand)', background: 'rgba(245,158,11,0.9)', padding: '2px 8px', borderRadius: 20, color: '#000' },
@@ -300,21 +300,21 @@ const styles = {
   gateOverlay: { position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.75)', backdropFilter: 'blur(6px)', zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16 },
   gateModal: { background: '#0d1117', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 20, padding: 32, maxWidth: 380, width: '100%', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12 },
   gateLock: { width: 64, height: 64, borderRadius: '50%', background: 'rgba(245,158,11,0.1)', border: '1px solid rgba(245,158,11,0.25)', display: 'flex', alignItems: 'center', justifyContent: 'center' },
-  gateTitle: { fontFamily: 'Syne, sans-serif', fontWeight: 700, fontSize: 20, color: '#f0f0f0', lineHeight: 1.3 },
+  gateTitle: { fontFamily: 'Inter, sans-serif', fontWeight: 700, fontSize: 20, color: '#f0f0f0', lineHeight: 1.3 },
   gateSub: { fontSize: 14, color: '#9ca3af', lineHeight: 1.6 },
   gateRegisterBtn: { display: 'block', width: '100%', background: 'var(--brand)', color: '#000', fontWeight: 700, fontSize: 15, padding: '13px 20px', borderRadius: 10, textDecoration: 'none' },
   gateLoginBtn: { fontSize: 13, color: '#9ca3af', textDecoration: 'none' },
   trust: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 16, maxWidth: 1200, margin: '0 auto', padding: '0 16px 48px' },
   trustCard: { background: '#0d1117', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 14, padding: 20, display: 'flex', flexDirection: 'column', gap: 8 },
-  trustTitle: { fontFamily: 'Syne, sans-serif', fontWeight: 700, fontSize: 15, color: '#f0f0f0' },
+  trustTitle: { fontFamily: 'Inter, sans-serif', fontWeight: 700, fontSize: 15, color: '#f0f0f0' },
   trustDesc: { fontSize: 13, color: '#9ca3af', lineHeight: 1.6 },
   cta: { background: 'linear-gradient(135deg, rgba(245,158,11,0.08) 0%, transparent 100%)', border: '1px solid rgba(245,158,11,0.2)', borderRadius: 20, margin: '0 16px 48px', padding: '40px 24px', textAlign: 'center', maxWidth: 1168, marginLeft: 'auto', marginRight: 'auto' },
-  ctaTitle: { fontFamily: 'Syne, sans-serif', fontWeight: 700, fontSize: 24, color: '#f0f0f0', marginBottom: 24, lineHeight: 1.3 },
+  ctaTitle: { fontFamily: 'Inter, sans-serif', fontWeight: 700, fontSize: 24, color: '#f0f0f0', marginBottom: 24, lineHeight: 1.3 },
   ctaBtns: { display: 'flex', flexDirection: 'column', gap: 12, maxWidth: 360, margin: '0 auto' },
   ctaPrimary: { background: 'var(--brand)', color: '#000', fontWeight: 700, fontSize: 15, padding: '14px 24px', borderRadius: 10, textDecoration: 'none', display: 'block' },
   ctaSecondary: { border: '1px solid rgba(255,255,255,0.07)', color: '#f0f0f0', fontWeight: 500, fontSize: 15, padding: '14px 24px', borderRadius: 10, textDecoration: 'none', display: 'block' },
   footer: { borderTop: '1px solid rgba(255,255,255,0.07)', padding: '28px 16px', textAlign: 'center', display: 'flex', flexDirection: 'column', gap: 12, alignItems: 'center' },
-  footerLogo: { fontFamily: 'Syne, sans-serif', fontWeight: 800, fontSize: 18, color: 'var(--brand)' },
+  footerLogo: { fontFamily: 'Inter, sans-serif', fontWeight: 800, fontSize: 18, color: 'var(--brand)' },
   footerLinks: { display: 'flex', gap: 20 },
   footerLink: { fontSize: 13, color: '#4b5563', textDecoration: 'none' },
   footerCopy: { fontSize: 12, color: '#4b5563' },

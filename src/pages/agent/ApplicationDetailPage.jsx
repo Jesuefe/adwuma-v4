@@ -366,7 +366,7 @@ export default function AgentApplicationDetailPage() {
         {rejectModal && (
           <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', zIndex: 200, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16 }} onClick={() => setRejectModal(null)}>
             <div style={{ background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 16, padding: 24, maxWidth: 400, width: '100%' }} onClick={e => e.stopPropagation()}>
-              <div style={{ fontFamily: 'Syne, sans-serif', fontWeight: 700, fontSize: 18, color: 'var(--text-1)', marginBottom: 8 }}>Reject Document</div>
+              <div style={{ fontFamily: 'Inter, sans-serif', fontWeight: 700, fontSize: 18, color: 'var(--text-1)', marginBottom: 8 }}>Reject Document</div>
               <div style={{ fontSize: 13, color: 'var(--text-2)', marginBottom: 16 }}>
                 Rejecting "<strong>{rejectModal.docName}</strong>". The seeker will be notified and asked to reupload.
               </div>
@@ -399,9 +399,9 @@ export default function AgentApplicationDetailPage() {
 const styles = {
   back: { display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 13, color: 'var(--text-2)', textDecoration: 'none', marginBottom: 20 },
   seekerAvatar: { width: 44, height: 44, borderRadius: '50%', background: 'var(--gold-dim)', border: '1px solid var(--gold-border)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 15, fontWeight: 700, color: 'var(--gold-text)', flexShrink: 0 },
-  seekerName: { fontFamily: 'Syne, sans-serif', fontWeight: 700, fontSize: 16, color: 'var(--text-1)', marginBottom: 3 },
+  seekerName: { fontFamily: 'Inter, sans-serif', fontWeight: 700, fontSize: 16, color: 'var(--text-1)', marginBottom: 3 },
   jobName: { fontSize: 12, color: 'var(--text-2)', marginBottom: 2 },
-  payAmount: { fontFamily: 'Syne, sans-serif', fontWeight: 800, fontSize: 18, color: 'var(--gold-text)', flexShrink: 0 },
+  payAmount: { fontFamily: 'Inter, sans-serif', fontWeight: 800, fontSize: 18, color: 'var(--gold-text)', flexShrink: 0 },
   coverMsg: { fontSize: 13, color: 'var(--text-2)', fontStyle: 'italic', lineHeight: 1.6, background: 'rgba(255,255,255,0.03)', padding: '10px 12px', borderRadius: 8, borderLeft: '2px solid var(--gold-border)' },
   cvLink: { display: 'inline-flex', alignItems: 'center', gap: 5, fontSize: 12, color: 'var(--gold-text)', marginTop: 8, textDecoration: 'none' },
   tabs: { display: 'flex', borderBottom: '1px solid var(--border)', marginBottom: 20, gap: 2, overflowX: 'auto' },
@@ -409,7 +409,7 @@ const styles = {
   tabActive: { color: 'var(--gold)', borderBottomColor: 'var(--gold)' },
   stepCard: { display: 'flex', alignItems: 'center', gap: 12, border: '1px solid', borderRadius: 10, padding: '12px 14px' },
   stepSelect: { background: 'var(--bg-2)', border: '1px solid var(--border)', borderRadius: 6, padding: '6px 10px', fontSize: 12, color: 'var(--text-1)', cursor: 'pointer', fontFamily: 'Inter, sans-serif', flexShrink: 0 },
-  sectionTitle: { fontFamily: 'Syne, sans-serif', fontWeight: 700, fontSize: 14, color: 'var(--text-1)', marginBottom: 12 },
+  sectionTitle: { fontFamily: 'Inter, sans-serif', fontWeight: 700, fontSize: 14, color: 'var(--text-1)', marginBottom: 12 },
   checklistHints: { display: 'flex', flexWrap: 'wrap', gap: 6 },
   hintBtn: { fontSize: 11, color: 'var(--gold-text)', background: 'var(--gold-dim)', border: '1px solid var(--gold-border)', borderRadius: 20, padding: '4px 10px', cursor: 'pointer', fontFamily: 'Inter, sans-serif' },
   docRow: { display: 'flex', alignItems: 'flex-start', gap: 10, background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 10, padding: '12px 14px' },

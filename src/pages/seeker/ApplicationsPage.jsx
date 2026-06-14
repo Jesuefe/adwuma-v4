@@ -8,7 +8,7 @@ import { BriefcaseIcon, ChevronRightIcon, SearchIcon } from '../../components/ui
 
 const STATUS_STYLES = {
   in_escrow:    { bg: 'rgba(96,165,250,0.1)',  color: '#60a5fa',  label: 'In Escrow' },
-  under_review: { bg: 'rgba(245,158,11,0.1)',  color: '#f59e0b',  label: 'Under Review' },
+  under_review: { bg: 'rgba(245,158,11,0.1)',  color: 'var(--brand)',  label: 'Under Review' },
   approved:     { bg: 'rgba(34,197,94,0.1)',   color: '#22c55e',  label: 'Approved' },
   refunded:     { bg: 'rgba(239,68,68,0.08)',  color: '#ef4444',  label: 'Refunded' },
 };
@@ -80,12 +80,12 @@ export default function SeekerApplicationsPage() {
 
 const styles = {
   pageHeader: { marginBottom: 24 },
-  pageTitle: { fontFamily: 'Syne, sans-serif', fontWeight: 700, fontSize: 22, color: 'var(--text-1)', marginBottom: 4 },
+  pageTitle: { fontFamily: 'Inter, sans-serif', fontWeight: 700, fontSize: 22, color: 'var(--text-1)', marginBottom: 4 },
   pageSub: { fontSize: 13, color: 'var(--text-2)' },
   browseBtn: { display: 'flex', alignItems: 'center', gap: 6, background: 'var(--gold)', color: '#000', fontWeight: 600, fontSize: 14, padding: '10px 20px', borderRadius: 8, textDecoration: 'none', marginTop: 8 },
   appCard: { background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 12, padding: 16, display: 'flex', flexDirection: 'column', gap: 4, textDecoration: 'none' },
   appCardTop: { display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 10 },
-  jobTitle: { fontFamily: 'Syne, sans-serif', fontWeight: 700, fontSize: 15, color: 'var(--text-1)', marginBottom: 3 },
+  jobTitle: { fontFamily: 'Inter, sans-serif', fontWeight: 700, fontSize: 15, color: 'var(--text-1)', marginBottom: 3 },
   jobMeta: { fontSize: 12, color: 'var(--text-2)', marginBottom: 3 },
   fee: { fontSize: 12, fontWeight: 600, color: 'var(--gold-text)' },
   badge: { fontSize: 10, fontWeight: 600, padding: '3px 8px', borderRadius: 20 },

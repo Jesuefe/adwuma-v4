@@ -76,9 +76,9 @@ export default function AgentProfilePage() {
 const styles = {
   avatarSection: { display: 'flex', alignItems: 'center', gap: 16, marginBottom: 28 },
   avatar: { width: 64, height: 64, borderRadius: '50%', background: 'var(--gold-dim)', border: '2px solid var(--gold-border)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22, fontWeight: 700, color: 'var(--gold-text)' },
-  name: { fontFamily: 'Syne, sans-serif', fontWeight: 700, fontSize: 18, color: 'var(--text-1)', marginBottom: 3 },
+  name: { fontFamily: 'Inter, sans-serif', fontWeight: 700, fontSize: 18, color: 'var(--text-1)', marginBottom: 3 },
   role: { fontSize: 13, color: 'var(--text-3)' },
-  sectionTitle: { fontFamily: 'Syne, sans-serif', fontWeight: 700, fontSize: 14, color: 'var(--text-1)', marginBottom: 16, paddingBottom: 10, borderBottom: '1px solid var(--border)' },
+  sectionTitle: { fontFamily: 'Inter, sans-serif', fontWeight: 700, fontSize: 14, color: 'var(--text-1)', marginBottom: 16, paddingBottom: 10, borderBottom: '1px solid var(--border)' },
   infoRow: { display: 'flex', justifyContent: 'space-between', gap: 12, padding: '8px 0', borderBottom: '1px solid var(--border-2)' },
   infoLabel: { fontSize: 13, color: 'var(--text-3)' },
   infoValue: { fontSize: 13, color: 'var(--text-1)', fontWeight: 500 },

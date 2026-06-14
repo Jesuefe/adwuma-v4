@@ -87,7 +87,7 @@ export default function SavedJobsPage() {
 }
 
 const styles = {
-  pageTitle: { fontFamily: 'Syne, sans-serif', fontWeight: 700, fontSize: 22, color: 'var(--text-1)', marginBottom: 4 },
+  pageTitle: { fontFamily: 'Inter, sans-serif', fontWeight: 700, fontSize: 22, color: 'var(--text-1)', marginBottom: 4 },
   pageSub: { fontSize: 13, color: 'var(--text-2)', marginBottom: 24 },
   browseBtn: { background: 'var(--gold)', color: '#000', fontWeight: 600, fontSize: 14, padding: '10px 20px', borderRadius: 8, textDecoration: 'none', marginTop: 8 },
   savedCard: { background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 12, overflow: 'hidden' },
@@ -95,7 +95,7 @@ const styles = {
   cardBody: { padding: 14, display: 'flex', flexDirection: 'column', gap: 10 },
   cardTop: { display: 'flex', alignItems: 'flex-start', gap: 10 },
   logo: { width: 36, height: 36, borderRadius: 8, objectFit: 'cover', border: '1px solid var(--border)', flexShrink: 0 },
-  jobTitle: { fontFamily: 'Syne, sans-serif', fontWeight: 700, fontSize: 15, color: 'var(--text-1)', marginBottom: 2 },
+  jobTitle: { fontFamily: 'Inter, sans-serif', fontWeight: 700, fontSize: 15, color: 'var(--text-1)', marginBottom: 2 },
   jobMeta: { fontSize: 12, color: 'var(--text-2)', marginBottom: 2 },
   jobFee: { fontSize: 12, fontWeight: 600, color: 'var(--gold-text)' },
   unsaveBtn: { background: 'var(--error-dim)', border: '1px solid rgba(239,68,68,0.2)', borderRadius: 6, padding: 6, cursor: 'pointer', color: 'var(--error)', display: 'flex', alignItems: 'center', flexShrink: 0 },

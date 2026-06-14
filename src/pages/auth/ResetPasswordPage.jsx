@@ -86,8 +86,8 @@ export default function ResetPasswordPage() {
 const styles = {
   root: { minHeight: '100vh', minHeight: '100dvh', background: '#05080f', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24, fontFamily: "'Inter', sans-serif" },
   card: { width: '100%', maxWidth: 400 },
-  logo: { fontFamily: "'Syne', sans-serif", fontWeight: 800, fontSize: 22, color: 'var(--brand)', marginBottom: 28 },
-  title: { fontFamily: "'Syne', sans-serif", fontWeight: 700, fontSize: 24, color: '#f0f0f0', marginBottom: 8 },
+  logo: { fontFamily: "'Inter', sans-serif", fontWeight: 800, fontSize: 22, color: 'var(--brand)', marginBottom: 28 },
+  title: { fontFamily: "'Inter', sans-serif", fontWeight: 700, fontSize: 24, color: '#f0f0f0', marginBottom: 8 },
   sub: { fontSize: 14, color: '#8b8fa8', marginBottom: 28 },
   waiting: { padding: '24px 0' },
   form: { display: 'flex', flexDirection: 'column', gap: 18 },

@@ -125,8 +125,8 @@ export default function AppShell({ children, title = 'Ajuma Link' }) {
       <nav className="sidebar">
         {/* Logo */}
         <div style={{ padding: '24px 20px 16px', borderBottom: '1px solid var(--border)' }}>
-          <div style={{ fontFamily: 'Syne, sans-serif', fontWeight: 800, fontSize: 20, color: 'var(--gold)', letterSpacing: '-0.5px' }}>
-            Adwuma
+          <div style={{ fontFamily: 'Inter, sans-serif', fontWeight: 800, fontSize: 20, color: 'var(--gold)', letterSpacing: '-0.5px' }}>
+            Ajuma Link
           </div>
           <div style={{ fontSize: 11, color: 'var(--text-3)', marginTop: 2 }}>
             {role.charAt(0).toUpperCase() + role.slice(1)} Portal

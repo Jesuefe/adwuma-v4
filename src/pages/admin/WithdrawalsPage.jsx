@@ -26,7 +26,7 @@ function RejectModal({ withdrawal, onClose, onConfirm }) {
 
 function WithdrawalCard({ w, onApprove, onProcess, onReject }) {
   const ST = {
-    pending:   { bg: 'rgba(245,158,11,0.1)',  color: '#f59e0b', label: 'Pending' },
+    pending:   { bg: 'rgba(245,158,11,0.1)',  color: 'var(--brand)', label: 'Pending' },
     approved:  { bg: 'rgba(96,165,250,0.1)',   color: '#60a5fa', label: 'Approved' },
     processed: { bg: 'rgba(34,197,94,0.1)',    color: '#22c55e', label: 'Processed' },
     rejected:  { bg: 'rgba(239,68,68,0.08)',   color: '#ef4444', label: 'Rejected' },
@@ -199,7 +199,7 @@ export default function WithdrawalsPage() {
 
 const styles = {
   pageHeader: { marginBottom: 20 },
-  pageTitle: { fontFamily: 'Syne, sans-serif', fontWeight: 700, fontSize: 22, color: 'var(--text-1)', marginBottom: 4 },
+  pageTitle: { fontFamily: 'Inter, sans-serif', fontWeight: 700, fontSize: 22, color: 'var(--text-1)', marginBottom: 4 },
   pageSub: { fontSize: 13, color: 'var(--text-2)' },
   filterTabs: { display: 'flex', gap: 6, marginBottom: 20, flexWrap: 'wrap' },
   filterTab: { padding: '7px 14px', borderRadius: 8, border: '1px solid var(--border)', background: 'none', color: 'var(--text-2)', fontSize: 12, fontWeight: 500, cursor: 'pointer', fontFamily: 'Inter, sans-serif' },
@@ -209,7 +209,7 @@ const styles = {
   agentName: { fontSize: 15, fontWeight: 600, color: 'var(--text-1)', marginBottom: 2 },
   agentEmail: { fontSize: 12, color: 'var(--text-2)', marginBottom: 2 },
   requestDate: { fontSize: 11, color: 'var(--text-3)' },
-  amount: { fontFamily: 'Syne, sans-serif', fontWeight: 800, fontSize: 20, color: 'var(--gold-text)', marginBottom: 4 },
+  amount: { fontFamily: 'Inter, sans-serif', fontWeight: 800, fontSize: 20, color: 'var(--gold-text)', marginBottom: 4 },
   badge: { fontSize: 11, fontWeight: 600, padding: '3px 10px', borderRadius: 20 },
   bankDetails: { background: 'var(--bg-2)', borderRadius: 8, padding: '10px 14px', display: 'flex', flexDirection: 'column', gap: 6 },
   bankRow: { display: 'flex', justifyContent: 'space-between', gap: 12 },
@@ -220,7 +220,7 @@ const styles = {
   rejectionNote: { display: 'flex', gap: 8, fontSize: 12, color: 'var(--error)', background: 'var(--error-dim)', padding: '8px 12px', borderRadius: 6, alignItems: 'flex-start' },
   overlay: { position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(4px)', zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16 },
   modal: { background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 16, padding: 24, width: '100%', maxWidth: 420, display: 'flex', flexDirection: 'column', gap: 16 },
-  modalTitle: { fontFamily: 'Syne, sans-serif', fontWeight: 700, fontSize: 18, color: 'var(--text-1)' },
+  modalTitle: { fontFamily: 'Inter, sans-serif', fontWeight: 700, fontSize: 18, color: 'var(--text-1)' },
   modalSub: { fontSize: 13, color: 'var(--text-2)', lineHeight: 1.6, marginTop: -8 },
   textarea: { width: '100%', background: 'rgba(255,255,255,0.04)', border: '1px solid var(--border)', borderRadius: 8, padding: 12, fontSize: 14, color: 'var(--text-1)', outline: 'none', fontFamily: 'Inter, sans-serif', resize: 'vertical' },
   modalBtns: { display: 'flex', gap: 10, justifyContent: 'flex-end' },

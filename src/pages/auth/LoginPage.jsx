@@ -61,14 +61,14 @@ export default function LoginPage() {
           gap: 12px;
         }
         .login-logo {
-          font-family: 'Syne', sans-serif;
+          font-family: 'Inter', sans-serif;
           font-weight: 800;
           font-size: 20px;
           color: #6366f1;
           letter-spacing: -0.5px;
         }
         .login-tagline {
-          font-family: 'Syne', sans-serif;
+          font-family: 'Inter', sans-serif;
           font-weight: 700;
           font-size: 22px;
           line-height: 1.25;
@@ -99,7 +99,7 @@ export default function LoginPage() {
           padding: 32px 24px 40px;
         }
         .login-card-title {
-          font-family: 'Syne', sans-serif;
+          font-family: 'Inter', sans-serif;
           font-weight: 700;
           font-size: 24px;
           color: #f0f0f0;
@@ -218,7 +218,7 @@ export default function LoginPage() {
         {/* Form */}
         <div className="login-form-wrap">
           <h2 className="login-card-title">Sign in</h2>
-          <p className="login-card-sub">Welcome back to Adwuma</p>
+          <p className="login-card-sub">Welcome back to Ajuma Link</p>
 
           <form className="login-form" onSubmit={handleSubmit}>
             {error && <div className="login-error">{error}</div>}
@@ -256,7 +256,7 @@ export default function LoginPage() {
 
             <div className="login-divider">
               <span className="login-divider-line" />
-              <span className="login-divider-text">New to Adwuma?</span>
+              <span className="login-divider-text">New to Ajuma Link?</span>
               <span className="login-divider-line" />
             </div>
 

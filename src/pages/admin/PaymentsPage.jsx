@@ -133,11 +133,25 @@ export default function PaymentsPage() {
       await supabase.from('payments').update({ escrow_status: 'released', agent_payout_amount: agentPayout, platform_fee_amount: platformFee, released_at: new Date().toISOString() }).eq('id', payment.id);
       // Audit log
       await supabase.from('audit_logs').insert({ action: 'release_escrow', entity_type: 'payment', entity_id: payment.id, new_value: { amount: payment.amount, agent_payout: agentPayout, platform_fee: platformFee } });
-      // Credit agent wallet
-      const { data: wallet } = await supabase.from('agent_wallets').select('balance').eq('agent_id', payment.agent_id).eq('currency', payment.currency).single();
-      const newBalance = (wallet?.balance || 0) + agentPayout;
-      await supabase.from('agent_wallets').upsert({ agent_id: payment.agent_id, currency: payment.currency, balance: newBalance });
-      await supabase.from('wallet_transactions').insert({ agent_id: payment.agent_id, currency: payment.currency, type: 'credit', amount: agentPayout, description: `Escrow released — ${payment.applications?.jobs?.title || 'Application'}`, reference_id: payment.id, balance_after: newBalance });
+      // Credit agent wallet — always use NGN as wallet currency
+      const walletCurrency = 'NGN';
+      const { data: wallet, error: walletErr } = await supabase.from('agent_wallets')
+        .select('id, balance').eq('agent_id', payment.agent_id).eq('currency', walletCurrency).single();
+      
+      let newBalance;
+      if (wallet) {
+        newBalance = (Number(wallet.balance) || 0) + agentPayout;
+        await supabase.from('agent_wallets').update({ balance: newBalance }).eq('id', wallet.id);
+      } else {
+        newBalance = agentPayout;
+        await supabase.from('agent_wallets').insert({ agent_id: payment.agent_id, currency: walletCurrency, balance: newBalance });
+      }
+      
+      await supabase.from('wallet_transactions').insert({
+        agent_id: payment.agent_id, currency: walletCurrency, type: 'escrow_release',
+        amount: agentPayout, description: `Escrow released — ${payment.applications?.jobs?.title || 'Application'}`,
+        reference_id: payment.id, balance_after: newBalance
+      });
       // Notify agent
       await supabase.from('notifications').insert({ recipient_id: payment.agent_id, type: 'escrow_released', title: 'Payment Released!', body: `${formatMoney(agentPayout, payment.currency)} has been credited to your wallet.`, link: '/agent/wallet' });
       // Update application status
@@ -172,7 +186,7 @@ export default function PaymentsPage() {
           <div className="card-gold" style={{ marginBottom: 20, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <div>
               <div style={{ fontSize: 12, color: 'var(--text-3)', marginBottom: 4 }}>Total in Escrow</div>
-              <div style={{ fontFamily: 'Syne, sans-serif', fontWeight: 800, fontSize: 28, color: 'var(--gold-text)' }}>{formatMoney(totalHolding, 'NGN')}</div>
+              <div style={{ fontFamily: 'Inter, sans-serif', fontWeight: 800, fontSize: 28, color: 'var(--gold-text)' }}>{formatMoney(totalHolding, 'NGN')}</div>
             </div>
             <CreditCardIcon size={28} style={{ color: 'var(--gold)', opacity: 0.4 }} />
           </div>
@@ -231,14 +245,14 @@ export default function PaymentsPage() {
 
 const styles = {
   pageHeader: { marginBottom: 20 },
-  pageTitle: { fontFamily: 'Syne, sans-serif', fontWeight: 700, fontSize: 22, color: 'var(--text-1)', marginBottom: 4 },
+  pageTitle: { fontFamily: 'Inter, sans-serif', fontWeight: 700, fontSize: 22, color: 'var(--text-1)', marginBottom: 4 },
   pageSub: { fontSize: 13, color: 'var(--text-2)' },
   filterTabs: { display: 'flex', gap: 6, marginBottom: 20, flexWrap: 'wrap' },
   filterTab: { padding: '7px 14px', borderRadius: 8, border: '1px solid var(--border)', background: 'none', color: 'var(--text-2)', fontSize: 12, fontWeight: 500, cursor: 'pointer', fontFamily: 'Inter, sans-serif' },
   filterTabActive: { background: 'var(--gold-dim)', borderColor: 'var(--gold-border)', color: 'var(--gold-text)' },
   card: { background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 12, padding: 16, display: 'flex', flexDirection: 'column', gap: 12 },
   cardTop: { display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 10 },
-  payJobTitle: { fontFamily: 'Syne, sans-serif', fontWeight: 700, fontSize: 15, color: 'var(--text-1)', marginBottom: 4 },
+  payJobTitle: { fontFamily: 'Inter, sans-serif', fontWeight: 700, fontSize: 15, color: 'var(--text-1)', marginBottom: 4 },
   payMeta: { fontSize: 12, color: 'var(--text-2)', marginBottom: 2 },
   payDate: { fontSize: 11, color: 'var(--text-3)' },
   badge: { fontSize: 11, fontWeight: 600, padding: '3px 10px', borderRadius: 20 },
@@ -252,7 +266,7 @@ const styles = {
   refundedNote: { fontSize: 12, color: 'var(--error)', background: 'var(--error-dim)', padding: '8px 12px', borderRadius: 6 },
   overlay: { position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(4px)', zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16 },
   modal: { background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 16, padding: 24, width: '100%', maxWidth: 420, display: 'flex', flexDirection: 'column', gap: 16 },
-  modalTitle: { fontFamily: 'Syne, sans-serif', fontWeight: 700, fontSize: 18, color: 'var(--text-1)' },
+  modalTitle: { fontFamily: 'Inter, sans-serif', fontWeight: 700, fontSize: 18, color: 'var(--text-1)' },
   modalSub: { fontSize: 13, color: 'var(--text-2)', lineHeight: 1.6, marginTop: -8 },
   modalBtns: { display: 'flex', gap: 10, justifyContent: 'flex-end' },
 };

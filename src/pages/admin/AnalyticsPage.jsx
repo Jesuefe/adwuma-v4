@@ -13,7 +13,7 @@ function StatCard({ icon: Ico, label, value, sub, color }) {
         <span style={{ fontSize: 12, color: 'var(--text-3)' }}>{label}</span>
         <Ico size={16} style={{ color }} />
       </div>
-      <div style={{ fontFamily: 'Syne, sans-serif', fontWeight: 800, fontSize: 28, color: 'var(--text-1)' }}>{value}</div>
+      <div style={{ fontFamily: 'Inter, sans-serif', fontWeight: 800, fontSize: 28, color: 'var(--text-1)' }}>{value}</div>
       {sub && <div style={{ fontSize: 12, color: 'var(--text-3)' }}>{sub}</div>}
     </div>
   );
@@ -119,7 +119,7 @@ export default function AnalyticsPage() {
   return (
     <AppShell title="Analytics">
       <div className="page">
-        <div style={{ fontFamily: 'Syne, sans-serif', fontWeight: 700, fontSize: 22, color: 'var(--text-1)', marginBottom: 4 }}>Platform Analytics</div>
+        <div style={{ fontFamily: 'Inter, sans-serif', fontWeight: 700, fontSize: 22, color: 'var(--text-1)', marginBottom: 4 }}>Platform Analytics</div>
         <div style={{ fontSize: 13, color: 'var(--text-2)', marginBottom: 24 }}>Last 6 months overview</div>
 
         {/* Summary stats */}
@@ -196,5 +196,5 @@ export default function AnalyticsPage() {
 }
 
 const styles = {
-  chartTitle: { fontFamily: 'Syne, sans-serif', fontWeight: 700, fontSize: 14, color: 'var(--text-1)', marginBottom: 4 },
+  chartTitle: { fontFamily: 'Inter, sans-serif', fontWeight: 700, fontSize: 14, color: 'var(--text-1)', marginBottom: 4 },
 };

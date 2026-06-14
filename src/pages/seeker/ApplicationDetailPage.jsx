@@ -370,7 +370,7 @@ export default function ApplicationDetailPage() {
 
 const styles = {
   back: { display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 13, color: 'var(--text-2)', textDecoration: 'none', marginBottom: 20 },
-  jobTitle: { fontFamily: 'Syne, sans-serif', fontWeight: 700, fontSize: 18, color: 'var(--text-1)', marginBottom: 4 },
+  jobTitle: { fontFamily: 'Inter, sans-serif', fontWeight: 700, fontSize: 18, color: 'var(--text-1)', marginBottom: 4 },
   jobMeta: { fontSize: 13, color: 'var(--text-2)', marginBottom: 4 },
   paymentInfo: { display: 'flex', alignItems: 'center', gap: 10, paddingTop: 12, borderTop: '1px solid var(--gold-border)', marginTop: 12 },
   payLabel: { fontSize: 12, color: 'var(--text-3)', marginBottom: 2 },

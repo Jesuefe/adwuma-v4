@@ -411,9 +411,9 @@ export default function PostJobPage() {
 
 const styles = {
   back: { display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 13, color: 'var(--text-2)', background: 'none', border: 'none', cursor: 'pointer', padding: '0 0 16px 0', fontFamily: 'Inter, sans-serif' },
-  pageTitle: { fontFamily: 'Syne, sans-serif', fontWeight: 700, fontSize: 22, color: 'var(--text-1)', marginBottom: 6 },
+  pageTitle: { fontFamily: 'Inter, sans-serif', fontWeight: 700, fontSize: 22, color: 'var(--text-1)', marginBottom: 6 },
   pageSub: { fontSize: 13, color: 'var(--text-2)', marginBottom: 24, lineHeight: 1.6 },
-  sectionTitle: { fontFamily: 'Syne, sans-serif', fontWeight: 700, fontSize: 15, color: 'var(--text-1)', marginBottom: 16, paddingBottom: 12, borderBottom: '1px solid var(--border)' },
+  sectionTitle: { fontFamily: 'Inter, sans-serif', fontWeight: 700, fontSize: 15, color: 'var(--text-1)', marginBottom: 16, paddingBottom: 12, borderBottom: '1px solid var(--border)' },
   fieldLabel: { fontSize: 13, fontWeight: 500, color: '#c0c0d0', marginBottom: 6, display: 'block' },
   imgDropZone: { border: '1.5px dashed', borderRadius: 10, padding: 24, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', transition: 'all 0.15s', gap: 6, minHeight: 100 },
   dropText: { fontSize: 13, fontWeight: 500, color: 'var(--text-2)' },

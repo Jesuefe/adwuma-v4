@@ -8,7 +8,7 @@ import { UsersIcon, SearchIcon, ShieldIcon, AlertCircleIcon } from '../../compon
 
 const ROLE_STYLES = {
   seeker: { bg: 'rgba(96,165,250,0.1)',  color: '#60a5fa'  },
-  agent:  { bg: 'rgba(245,158,11,0.1)',  color: '#f59e0b'  },
+  agent:  { bg: 'rgba(245,158,11,0.1)',  color: 'var(--brand)'  },
   admin:  { bg: 'rgba(167,139,250,0.1)', color: '#a78bfa'  },
 };
 
@@ -74,7 +74,7 @@ export default function UsersPage() {
             { label: 'Suspended', value: users.filter(u => u.is_suspended).length, color: 'var(--error)' },
           ].map(s => (
             <div key={s.label} className="card" style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-              <div style={{ fontSize: 22, fontWeight: 700, fontFamily: 'Syne, sans-serif', color: s.color }}>{s.value}</div>
+              <div style={{ fontSize: 22, fontWeight: 700, fontFamily: 'Inter, sans-serif', color: s.color }}>{s.value}</div>
               <div style={{ fontSize: 11, color: 'var(--text-3)' }}>{s.label}</div>
             </div>
           ))}
@@ -152,7 +152,7 @@ export default function UsersPage() {
 
 const styles = {
   pageHeader: { marginBottom: 20 },
-  pageTitle: { fontFamily: 'Syne, sans-serif', fontWeight: 700, fontSize: 22, color: 'var(--text-1)', marginBottom: 4 },
+  pageTitle: { fontFamily: 'Inter, sans-serif', fontWeight: 700, fontSize: 22, color: 'var(--text-1)', marginBottom: 4 },
   pageSub: { fontSize: 13, color: 'var(--text-2)' },
   searchRow: { marginBottom: 12 },
   searchWrap: { display: 'flex', alignItems: 'center', gap: 10, background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 10, padding: '0 14px' },

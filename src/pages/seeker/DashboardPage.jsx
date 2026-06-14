@@ -12,7 +12,7 @@ const STEP_NAMES = ['Received', 'Payment', 'Docs Review', 'Processing', 'Offer',
 
 const STATUS_COLORS = {
   in_escrow: { bg: 'rgba(96,165,250,0.1)', color: '#60a5fa', label: 'In Escrow' },
-  under_review: { bg: 'rgba(245,158,11,0.1)', color: '#f59e0b', label: 'Under Review' },
+  under_review: { bg: 'rgba(245,158,11,0.1)', color: 'var(--brand)', label: 'Under Review' },
   approved: { bg: 'rgba(34,197,94,0.1)', color: '#22c55e', label: 'Approved' },
   refunded: { bg: 'rgba(239,68,68,0.1)', color: '#ef4444', label: 'Refunded' },
 };
@@ -73,7 +73,7 @@ export default function SeekerDashboard() {
           ].map(s => (
             <div key={s.label} className="card" style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
               <s.icon size={18} style={{ color: s.color }} />
-              <div style={{ fontSize: 22, fontWeight: 700, color: 'var(--text-1)', fontFamily: 'Syne, sans-serif' }}>{s.value}</div>
+              <div style={{ fontSize: 22, fontWeight: 700, color: 'var(--text-1)', fontFamily: 'Inter, sans-serif' }}>{s.value}</div>
               <div style={{ fontSize: 11, color: 'var(--text-3)' }}>{s.label}</div>
             </div>
           ))}
@@ -173,7 +173,7 @@ export default function SeekerDashboard() {
 
 const styles = {
   greeting: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24, gap: 12 },
-  greetTitle: { fontFamily: 'Syne, sans-serif', fontWeight: 700, fontSize: 22, color: 'var(--text-1)' },
+  greetTitle: { fontFamily: 'Inter, sans-serif', fontWeight: 700, fontSize: 22, color: 'var(--text-1)' },
   greetSub: { fontSize: 13, color: 'var(--text-2)', marginTop: 3 },
   findJobsBtn: { display: 'flex', alignItems: 'center', gap: 6, background: 'var(--gold)', color: '#000', fontWeight: 600, fontSize: 13, padding: '8px 14px', borderRadius: 8, textDecoration: 'none', whiteSpace: 'nowrap', flexShrink: 0 },
   seeAll: { fontSize: 13, color: 'var(--gold-text)', textDecoration: 'none' },

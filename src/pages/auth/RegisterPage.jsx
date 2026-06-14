@@ -55,7 +55,7 @@ export default function RegisterPage() {
           padding: 20px 24px;
           display: flex; align-items: center; justify-content: space-between;
         }
-        .reg-logo { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 20px; color: #6366f1; letter-spacing: -0.5px; }
+        .reg-logo { font-family: 'Inter', sans-serif; font-weight: 800; font-size: 20px; color: #6366f1; letter-spacing: -0.5px; }
         .reg-signin-link { font-size: 13px; color: #8b8fa8; text-decoration: none; }
         .reg-signin-link span { color: #6366f1; }
         .reg-body { padding: 28px 24px 48px; max-width: 480px; margin: 0 auto; }
@@ -75,7 +75,7 @@ export default function RegisterPage() {
         .reg-step-label.inactive { color: #4a4d5e; }
         .reg-step-line { flex: 1; height: 1px; background: rgba(255,255,255,0.07); max-width: 40px; }
         /* Role cards */
-        .reg-title { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 22px; color: #f0f0f0; letter-spacing: -0.5px; margin-bottom: 6px; }
+        .reg-title { font-family: 'Inter', sans-serif; font-weight: 700; font-size: 22px; color: #f0f0f0; letter-spacing: -0.5px; margin-bottom: 6px; }
         .reg-sub { font-size: 14px; color: #8b8fa8; margin-bottom: 24px; line-height: 1.5; }
         .reg-roles { display: flex; flex-direction: column; gap: 12px; margin-bottom: 28px; }
         .reg-role-card {
@@ -176,7 +176,7 @@ export default function RegisterPage() {
           {step === 1 && (
             <>
               <h2 className="reg-title">I am a…</h2>
-              <p className="reg-sub">Choose how you'll use Adwuma</p>
+              <p className="reg-sub">Choose how you'll use Ajuma Link</p>
               <div className="reg-roles">
                 {ROLES.map(r => (
                   <button key={r.id} onClick={() => handleRoleSelect(r.id)}

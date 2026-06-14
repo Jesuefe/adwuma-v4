@@ -13,7 +13,7 @@ import { PlusIcon, BriefcaseIcon, EditIcon, TrashIcon, AlertCircleIcon, StarIcon
 const COUNTRY_FLAGS = { DE:'🇩🇪',GB:'🇬🇧',CA:'🇨🇦',AE:'🇦🇪',PL:'🇵🇱',NL:'🇳🇱',US:'🇺🇸',AU:'🇦🇺',BE:'🇧🇪',IE:'🇮🇪',NG:'🇳🇬',GH:'🇬🇭' };
 
 const STATUS_STYLES = {
-  pending:  { bg: 'rgba(245,158,11,0.1)',  color: '#f59e0b',  label: 'Pending Review' },
+  pending:  { bg: 'rgba(245,158,11,0.1)',  color: 'var(--brand)',  label: 'Pending Review' },
   active:   { bg: 'rgba(34,197,94,0.1)',   color: '#22c55e',  label: 'Active' },
   rejected: { bg: 'rgba(239,68,68,0.08)',  color: '#ef4444',  label: 'Rejected' },
   expired:  { bg: 'rgba(255,255,255,0.06)',color: '#9ca3af',  label: 'Expired' },
@@ -154,7 +154,7 @@ export default function AgentJobsPage() {
 const styles = {
   kycBanner: { display: 'flex', alignItems: 'center', gap: 10, background: 'rgba(245,158,11,0.06)', border: '1px solid var(--gold-border)', borderRadius: 10, padding: '12px 14px', marginBottom: 20 },
   pageHeader: { display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12, marginBottom: 20 },
-  pageTitle: { fontFamily: 'Syne, sans-serif', fontWeight: 700, fontSize: 22, color: 'var(--text-1)', marginBottom: 4 },
+  pageTitle: { fontFamily: 'Inter, sans-serif', fontWeight: 700, fontSize: 22, color: 'var(--text-1)', marginBottom: 4 },
   pageSub: { fontSize: 13, color: 'var(--text-2)' },
   postBtn: { display: 'flex', alignItems: 'center', gap: 6, background: 'var(--gold)', color: '#000', fontWeight: 600, fontSize: 13, padding: '9px 16px', borderRadius: 8, textDecoration: 'none', flexShrink: 0 },
   filterTabs: { display: 'flex', gap: 6, marginBottom: 20, flexWrap: 'wrap' },
@@ -162,7 +162,7 @@ const styles = {
   filterTabActive: { background: 'var(--gold-dim)', borderColor: 'var(--gold-border)', color: 'var(--gold-text)' },
   jobCard: { background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 12, padding: 16, display: 'flex', flexDirection: 'column', gap: 10 },
   jobCardTop: { display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 10 },
-  jobTitle: { fontFamily: 'Syne, sans-serif', fontWeight: 700, fontSize: 15, color: 'var(--text-1)', marginBottom: 3 },
+  jobTitle: { fontFamily: 'Inter, sans-serif', fontWeight: 700, fontSize: 15, color: 'var(--text-1)', marginBottom: 3 },
   jobMeta: { fontSize: 12, color: 'var(--text-2)', marginBottom: 3 },
   jobFee: { fontSize: 12, fontWeight: 600, color: 'var(--gold-text)' },
   badge: { fontSize: 11, fontWeight: 600, padding: '3px 10px', borderRadius: 20 },

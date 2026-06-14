@@ -70,7 +70,7 @@ export default function SettingsPage() {
       title: 'Platform Fees',
       desc: 'Configure how the platform earns revenue',
       fields: [
-        { key: 'platform_fee_pct', label: 'Platform Fee', hint: 'Percentage of each service fee Adwuma keeps', suffix: '%' },
+        { key: 'platform_fee_pct', label: 'Platform Fee', hint: 'Percentage of each service fee Ajuma Link keeps', suffix: '%' },
         { key: 'posting_fee_pct', label: 'Job Posting Fee', hint: 'Percentage of service fee charged to agent when job is approved', suffix: '% of service fee' },
       ],
     },
@@ -187,10 +187,10 @@ export default function SettingsPage() {
 
 const styles = {
   pageHeader: { display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12, marginBottom: 24 },
-  pageTitle: { fontFamily: 'Syne, sans-serif', fontWeight: 700, fontSize: 22, color: 'var(--text-1)', marginBottom: 4 },
+  pageTitle: { fontFamily: 'Inter, sans-serif', fontWeight: 700, fontSize: 22, color: 'var(--text-1)', marginBottom: 4 },
   pageSub: { fontSize: 13, color: 'var(--text-2)' },
   sectionHeader: { marginBottom: 16, paddingBottom: 12, borderBottom: '1px solid var(--border)' },
-  sectionTitle: { fontFamily: 'Syne, sans-serif', fontWeight: 700, fontSize: 15, color: 'var(--text-1)', marginBottom: 3 },
+  sectionTitle: { fontFamily: 'Inter, sans-serif', fontWeight: 700, fontSize: 15, color: 'var(--text-1)', marginBottom: 3 },
   sectionDesc: { fontSize: 12, color: 'var(--text-3)' },
   field: { display: 'flex', flexDirection: 'column', gap: 5 },
   fieldLabel: { fontSize: 13, fontWeight: 500, color: '#c0c0d0' },

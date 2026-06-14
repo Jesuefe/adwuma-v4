@@ -338,7 +338,7 @@ export default function JobDetailPage() {
               ) : step === 'checklist' ? (
                 /* Pre-application checklist */
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-                  <div style={{ fontFamily: 'Syne, sans-serif', fontWeight: 700, fontSize: 15, color: 'var(--text-1)' }}>Before You Apply</div>
+                  <div style={{ fontFamily: 'Inter, sans-serif', fontWeight: 700, fontSize: 15, color: 'var(--text-1)' }}>Before You Apply</div>
 
                   {seekerDocs.length > 0 && (
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
@@ -370,7 +370,7 @@ export default function JobDetailPage() {
               ) : step === 'form' || step === 'paying' ? (
                 /* Application form */
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-                  <div style={{ fontFamily: 'Syne, sans-serif', fontWeight: 700, fontSize: 15, color: 'var(--text-1)' }}>Your Application</div>
+                  <div style={{ fontFamily: 'Inter, sans-serif', fontWeight: 700, fontSize: 15, color: 'var(--text-1)' }}>Your Application</div>
                   <div>
                     <label style={styles.fieldLabel}>Cover message (optional)</label>
                     <textarea style={styles.textarea} rows={3} value={coverMessage} onChange={e => setCoverMessage(e.target.value)} placeholder="Tell the agent why you're a good fit…" />
@@ -405,7 +405,7 @@ const styles = {
   header: { position: 'sticky', top: 0, zIndex: 50, background: 'rgba(5,8,15,0.92)', backdropFilter: 'blur(12px)', borderBottom: '1px solid var(--border)' },
   headerInner: { display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 16px', height: 56, maxWidth: 1200, margin: '0 auto' },
   backBtn: { display: 'flex', alignItems: 'center', gap: 5, fontSize: 13, color: 'var(--text-2)', textDecoration: 'none' },
-  logo: { fontFamily: 'Syne, sans-serif', fontWeight: 800, fontSize: 20, color: 'var(--brand)', textDecoration: 'none' },
+  logo: { fontFamily: 'Inter, sans-serif', fontWeight: 800, fontSize: 20, color: 'var(--brand)', textDecoration: 'none' },
   body: { maxWidth: 1200, margin: '0 auto', padding: '0 0 48px' },
   coverWrap: { width: '100%', height: 280, overflow: 'hidden' },
   coverImg: { width: '100%', height: '100%', objectFit: 'cover' },
@@ -413,18 +413,18 @@ const styles = {
   main: { flex: 1 },
   sidebar: { width: '100%' },
   jobHeader: { background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 14, padding: 20, marginBottom: 16 },
-  jobTitle: { fontFamily: 'Syne, sans-serif', fontWeight: 800, fontSize: 24, color: 'var(--text-1)', marginBottom: 6, letterSpacing: '-0.5px' },
+  jobTitle: { fontFamily: 'Inter, sans-serif', fontWeight: 800, fontSize: 24, color: 'var(--text-1)', marginBottom: 6, letterSpacing: '-0.5px' },
   jobCompany: { fontSize: 15, color: 'var(--text-2)', marginBottom: 10 },
   companyLogo: { width: 60, height: 60, borderRadius: 12, objectFit: 'cover', border: '2px solid var(--border)', flexShrink: 0 },
   tags: { display: 'flex', flexWrap: 'wrap', gap: 8 },
   tag: { display: 'flex', alignItems: 'center', gap: 4, fontSize: 12, color: 'var(--text-2)', background: 'rgba(255,255,255,0.05)', padding: '4px 10px', borderRadius: 20 },
-  sectionTitle: { fontFamily: 'Syne, sans-serif', fontWeight: 700, fontSize: 15, color: 'var(--text-1)', marginBottom: 12 },
+  sectionTitle: { fontFamily: 'Inter, sans-serif', fontWeight: 700, fontSize: 15, color: 'var(--text-1)', marginBottom: 12 },
   bodyText: { fontSize: 14, color: 'var(--text-2)', lineHeight: 1.8, whiteSpace: 'pre-line' },
   docItem: { display: 'flex', alignItems: 'center', gap: 8 },
   seekerDocItem: { display: 'flex', alignItems: 'center', gap: 8, background: 'rgba(255,255,255,0.02)', borderRadius: 8, padding: '8px 10px' },
   agentAvatar: { width: 44, height: 44, borderRadius: '50%', background: 'var(--gold-dim)', border: '1px solid var(--gold-border)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 15, fontWeight: 700, color: 'var(--gold-text)' },
   applyCard: { background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 14, padding: 20, display: 'flex', flexDirection: 'column', gap: 14, position: 'sticky', top: 70 },
-  feeAmount: { fontFamily: 'Syne, sans-serif', fontWeight: 800, fontSize: 32, color: 'var(--gold-text)', letterSpacing: '-0.5px' },
+  feeAmount: { fontFamily: 'Inter, sans-serif', fontWeight: 800, fontSize: 32, color: 'var(--gold-text)', letterSpacing: '-0.5px' },
   escrowNote: { display: 'flex', alignItems: 'flex-start', gap: 8, fontSize: 12, color: 'var(--text-2)', background: 'var(--gold-dim)', padding: '8px 12px', borderRadius: 8, lineHeight: 1.5 },
   applyBtn: { display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, background: 'var(--brand)', color: '#000', border: 'none', borderRadius: 10, padding: '14px 20px', fontSize: 15, fontWeight: 700, cursor: 'pointer', fontFamily: 'Inter, sans-serif', width: '100%', minHeight: 48, textDecoration: 'none' },
   cancelBtn: { background: 'none', border: '1px solid var(--border)', color: 'var(--text-2)', borderRadius: 10, padding: '10px 20px', fontSize: 14, cursor: 'pointer', fontFamily: 'Inter, sans-serif', width: '100%' },

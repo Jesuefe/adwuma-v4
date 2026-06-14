@@ -171,7 +171,7 @@ function MessageArea({ thread, userId, isAdmin, onBack }) {
       </div>
 
       <div style={styles.safetyBanner}>
-        🔒 For your safety, contact details and external links are blocked. All communication must stay on Adwuma.
+        🔒 For your safety, contact details and external links are blocked. All communication must stay on Ajuma Link.
         {!isAdmin && (
           <button
             onClick={async () => {
@@ -334,7 +334,7 @@ const styles = {
   layout: { display: 'flex', flex: 1, overflow: 'hidden' },
   threadList: { width: 300, flexShrink: 0, borderRight: '1px solid var(--border)', display: 'flex', flexDirection: 'column', background: 'var(--bg-2)', overflow: 'hidden' },
   threadHeader: { padding: '14px 14px 10px', borderBottom: '1px solid var(--border)', flexShrink: 0 },
-  threadTitle: { fontFamily: 'Syne, sans-serif', fontWeight: 700, fontSize: 16, color: 'var(--text-1)', marginBottom: 10 },
+  threadTitle: { fontFamily: 'Inter, sans-serif', fontWeight: 700, fontSize: 16, color: 'var(--text-1)', marginBottom: 10 },
   threadSearch: { display: 'flex', alignItems: 'center', gap: 7, background: 'rgba(255,255,255,0.04)', border: '1px solid var(--border)', borderRadius: 8, padding: '7px 10px' },
   threadSearchInput: { flex: 1, background: 'none', border: 'none', outline: 'none', fontSize: 13, color: 'var(--text-1)', fontFamily: 'Inter, sans-serif' },
   noThreads: { display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '40px 20px' },
@@ -348,7 +348,7 @@ const styles = {
   chatArea: { flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0, overflow: 'hidden' },
   chatHeader: { display: 'flex', alignItems: 'center', gap: 10, padding: '12px 16px', borderBottom: '1px solid var(--border)', background: 'var(--bg-2)', flexShrink: 0 },
   backBtn: { background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-2)', display: 'none', alignItems: 'center', padding: 4, fontFamily: 'Inter, sans-serif' },
-  chatTitle: { fontFamily: 'Syne, sans-serif', fontWeight: 700, fontSize: 14, color: 'var(--text-1)', marginBottom: 2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' },
+  chatTitle: { fontFamily: 'Inter, sans-serif', fontWeight: 700, fontSize: 14, color: 'var(--text-1)', marginBottom: 2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' },
   chatSub: { fontSize: 11, color: 'var(--text-3)' },
   safetyBanner: { fontSize: 11, color: 'var(--text-3)', background: 'rgba(99,102,241,0.06)', borderBottom: '1px solid rgba(99,102,241,0.1)', padding: '7px 16px', flexShrink: 0 },
   emptyChat: { flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 40 },

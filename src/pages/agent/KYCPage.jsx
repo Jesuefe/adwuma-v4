@@ -179,7 +179,7 @@ export default function KYCPage() {
     <AppShell title="KYC Verification">
       <div className="page" style={{ maxWidth: 600, margin: '0 auto' }}>
         <div style={styles.pageTitle}>Identity Verification</div>
-        <div style={styles.pageSub}>Complete all steps below to unlock job posting on Adwuma.</div>
+        <div style={styles.pageSub}>Complete all steps below to unlock job posting on Ajuma Link.</div>
 
         {/* Status banner */}
         <div style={{ ...styles.statusBanner, background: status.bg, borderColor: status.color + '40' }}>
@@ -286,12 +286,12 @@ export default function KYCPage() {
 }
 
 const styles = {
-  pageTitle: { fontFamily: 'Syne, sans-serif', fontWeight: 700, fontSize: 22, color: 'var(--text-1)', marginBottom: 6 },
+  pageTitle: { fontFamily: 'Inter, sans-serif', fontWeight: 700, fontSize: 22, color: 'var(--text-1)', marginBottom: 6 },
   pageSub: { fontSize: 14, color: 'var(--text-2)', marginBottom: 24, lineHeight: 1.6 },
   statusBanner: { border: '1px solid', borderRadius: 12, padding: 16, marginBottom: 20 },
   stepHeader: { display: 'flex', alignItems: 'center', gap: 10, marginBottom: 14 },
   stepNum: { width: 26, height: 26, borderRadius: '50%', background: 'var(--gold-dim)', border: '1px solid var(--gold-border)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 700, color: 'var(--gold-text)', flexShrink: 0 },
-  sectionTitle: { fontFamily: 'Syne, sans-serif', fontWeight: 700, fontSize: 15, color: 'var(--text-1)' },
+  sectionTitle: { fontFamily: 'Inter, sans-serif', fontWeight: 700, fontSize: 15, color: 'var(--text-1)' },
   savedNote: { display: 'flex', alignItems: 'center', gap: 5, fontSize: 12, color: '#22c55e', marginTop: 8 },
   docZoneWrap: { background: 'var(--card)', border: '1px solid var(--border)', borderRadius: 12, padding: 16 },
   docZoneHeader: { display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 10, marginBottom: 10 },
