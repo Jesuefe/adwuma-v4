@@ -13,7 +13,8 @@ const COUNTRY_FLAGS = { DE:'🇩🇪',GB:'🇬🇧',CA:'🇨🇦',AE:'🇦🇪',
 
 export default function JobDetailPage() {
   const { jobId } = useParams();
-  const { isAuthenticated, user, isSeeker } = useAuth();
+  const { isAuthenticated, user, isSeeker, profile } = useAuth();
+  const profileIncomplete = isSeeker && (!profile?.dob || !profile?.passport_number || !profile?.phone);
   const navigate = useNavigate();
   const [job, setJob] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -340,19 +341,15 @@ export default function JobDetailPage() {
                     <Link to="/auth/register" style={styles.applyBtn}>Sign up to Apply</Link>
                   ) : !isSeeker ? (
                     <div style={{ fontSize: 13, color: 'var(--text-3)', textAlign: 'center' }}>Only job seekers can apply</div>
-                  ) : (() => {
-                    const incomplete = !user?.profile?.dob || !user?.profile?.passport_number || !user?.profile?.phone;
-                    return incomplete ? (
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-                        <div style={{ background: 'var(--gold-dim)', border: '1px solid var(--gold-border)', borderRadius: 10, padding: 12, fontSize: 13, color: 'var(--text-1)', lineHeight: 1.6 }}>
-                          Complete your profile before applying. Agents need your date of birth and passport number.
-                        </div>
-                        <a href="/dashboard/profile" style={styles.applyBtn}>Complete Profile to Apply</a>
+                  ) : profileIncomplete ? (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                      <div style={{ background: 'var(--gold-dim)', border: '1px solid var(--gold-border)', borderRadius: 10, padding: 12, fontSize: 13, color: 'var(--text-1)', lineHeight: 1.6 }}>
+                        Complete your profile before applying. Agents need your date of birth and passport number.
                       </div>
-                    ) : (
-                      <button style={styles.applyBtn} onClick={() => setStep('checklist')}>Apply Now</button>
-                    );
-                  })()
+                      <a href="/dashboard/profile" style={styles.applyBtn}>Complete Profile to Apply</a>
+                    </div>
+                  ) : (
+                    <button style={styles.applyBtn} onClick={() => setStep('checklist')}>Apply Now</button>
                   )}
                 </>
               ) : step === 'checklist' ? (
