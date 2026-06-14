@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useAgentApplications } from 'hooks';
+import { useAgentApplications } from '../../hooks';
 import { formatMoney } from '../../lib/currency';
 import { formatDistanceToNow } from 'date-fns';
 import AppShell from '../../components/layout/AppShell';

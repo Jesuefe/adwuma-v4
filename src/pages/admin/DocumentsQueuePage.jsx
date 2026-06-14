@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { supabase } from 'lib/supabase';
+import { supabase } from '../../lib/supabase';
 import { formatDistanceToNow, format } from 'date-fns';
 import { toast } from 'react-toastify';
-import AppShell from 'components/layout/AppShell';
-import { FileTextIcon, ChevronDownIcon, ChevronUpIcon, CheckCircleIcon, AlertCircleIcon } from 'components/ui/Icons';
+import AppShell from '../../components/layout/AppShell';
+import { FileTextIcon, ChevronDownIcon, ChevronUpIcon, CheckCircleIcon, AlertCircleIcon } from '../../components/ui/Icons';
 
 function ApplicationDocGroup({ appGroup, onApprove, onReject }) {
   const [expanded, setExpanded] = useState(appGroup.hasPending);

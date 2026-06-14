@@ -1,11 +1,11 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { supabase } from 'lib/supabase';
-import { useAuth } from 'context/AuthContext';
-import { formatMoney } from 'lib/currency';
-import AppShell from 'components/layout/AppShell';
-import { BriefcaseIcon, XIcon } from 'components/ui/Icons';
+import { supabase } from '../../lib/supabase';
+import { useAuth } from '../../context/AuthContext';
+import { formatMoney } from '../../lib/currency';
+import AppShell from '../../components/layout/AppShell';
+import { BriefcaseIcon, XIcon } from '../../components/ui/Icons';
 
 const COUNTRY_FLAGS = { DE:'🇩🇪',GB:'🇬🇧',CA:'🇨🇦',AE:'🇦🇪',PL:'🇵🇱',NL:'🇳🇱',US:'🇺🇸',AU:'🇦🇺',BE:'🇧🇪',IE:'🇮🇪',NG:'🇳🇬',GH:'🇬🇭' };
 

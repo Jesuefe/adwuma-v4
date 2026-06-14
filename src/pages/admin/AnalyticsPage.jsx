@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { supabase } from 'lib/supabase';
-import { formatMoney } from 'lib/currency';
-import AppShell from 'components/layout/AppShell';
-import { TrendingUpIcon, DollarIcon, UsersIcon, BriefcaseIcon, MapPinIcon } from 'components/ui/Icons';
+import { supabase } from '../../lib/supabase';
+import { formatMoney } from '../../lib/currency';
+import AppShell from '../../components/layout/AppShell';
+import { TrendingUpIcon, DollarIcon, UsersIcon, BriefcaseIcon, MapPinIcon } from '../../components/ui/Icons';
 import { format, subMonths, startOfMonth, endOfMonth } from 'date-fns';
 
 function StatCard({ icon: Ico, label, value, sub, color }) {

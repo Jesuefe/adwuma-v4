@@ -1,10 +1,10 @@
 import React from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { supabase } from 'lib/supabase';
-import { formatMoney } from 'lib/currency';
-import { ShieldIcon, BriefcaseIcon, CheckCircleIcon, MapPinIcon, ArrowLeftIcon } from 'components/ui/Icons';
-import { useAuth } from 'context/AuthContext';
+import { supabase } from '../lib/supabase';
+import { formatMoney } from '../lib/currency';
+import { ShieldIcon, BriefcaseIcon, CheckCircleIcon, MapPinIcon, ArrowLeftIcon } from '../components/ui/Icons';
+import { useAuth } from '../context/AuthContext';
 
 const COUNTRY_FLAGS = { DE:'🇩🇪',GB:'🇬🇧',CA:'🇨🇦',AE:'🇦🇪',PL:'🇵🇱',NL:'🇳🇱',US:'🇺🇸',AU:'🇦🇺',BE:'🇧🇪',IE:'🇮🇪',NG:'🇳🇬',GH:'🇬🇭' };
 

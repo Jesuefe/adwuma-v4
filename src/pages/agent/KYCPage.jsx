@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import AppShell from '../../components/layout/AppShell';
 import { useAuth } from '../../context/AuthContext';
-import { useAgentKYC, useFileUpload } from 'hooks';
+import { useAgentKYC, useFileUpload } from '../../hooks';
 import { supabase } from '../../lib/supabase';
 import { useQueryClient } from '@tanstack/react-query';
 import { toast } from 'react-toastify';

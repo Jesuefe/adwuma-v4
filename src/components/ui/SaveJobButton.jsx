@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { useAuth } from 'context/AuthContext';
-import { supabase } from 'lib/supabase';
+import { useAuth } from '../../context/AuthContext';
+import { supabase } from '../../lib/supabase';
 import { useNavigate } from 'react-router-dom';
 
 export default function SaveJobButton({ jobId, size = 'md' }) {

@@ -1,14 +1,14 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { useAuth } from 'context/AuthContext';
-import { ThemeToggle } from 'context/ThemeContext';
-import { useNotifications } from 'hooks';
+import { useAuth } from '../../context/AuthContext';
+import { ThemeToggle } from '../../context/ThemeContext';
+import { useNotifications } from '../../hooks';
 import {
   HomeIcon, BriefcaseIcon, FileTextIcon, MessageIcon, UserIcon,
   WalletIcon, BellIcon, LogOutIcon, SettingsIcon, UsersIcon,
   ClipboardIcon, CreditCardIcon, ShieldIcon, ChevronRightIcon,
   TrendingUpIcon, AlertCircleIcon, SearchIcon
-} from 'components/ui/Icons';
+} from '../ui/Icons';
 import { formatDistanceToNow } from 'date-fns';
 
 const NAV = {

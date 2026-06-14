@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { supabase } from 'lib/supabase';
-import AppShell from 'components/layout/AppShell';
-import { ClipboardIcon } from 'components/ui/Icons';
+import { supabase } from '../../lib/supabase';
+import AppShell from '../../components/layout/AppShell';
+import { ClipboardIcon } from '../../components/ui/Icons';
 import { format } from 'date-fns';
 
 const ACTION_COLORS = {

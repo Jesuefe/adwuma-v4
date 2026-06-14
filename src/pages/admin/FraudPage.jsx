@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { supabase } from 'lib/supabase';
-import AppShell from 'components/layout/AppShell';
-import { AlertCircleIcon, ShieldIcon, MessageIcon, UserIcon } from 'components/ui/Icons';
+import { supabase } from '../../lib/supabase';
+import AppShell from '../../components/layout/AppShell';
+import { AlertCircleIcon, ShieldIcon, MessageIcon, UserIcon } from '../../components/ui/Icons';
 import { formatDistanceToNow } from 'date-fns';
 
 export default function FraudPage() {
