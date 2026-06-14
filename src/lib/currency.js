@@ -115,5 +115,5 @@ export function toNGN(amount, fromCurrency) {
 export function getConversionNote(amount, currency) {
   if (currency === 'NGN') return null;
   const converted = toNGN(amount, currency);
-  return \`Charged as ₦\${converted.toLocaleString()} (converted from \${currency} for payment processing)\`;
+  return `Charged as ₦${converted.toLocaleString()} (converted from ${currency} for payment processing)`;
 }
